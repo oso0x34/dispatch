@@ -99,6 +99,15 @@
   - `src-tauri/src/main.rs`
   - `src-tauri/src/lib.rs`
 
+## Skill Handoff Ledger
+
+- 2026-03-19 20:02:24 CDT — `implementer -> DISPATCH-005 / DISPATCH-006`
+  Status: PARTIAL_PASS
+  Summary: Scaffolded the real Tauri v2 + React 19 workspace, added the canonical repo layout under `src/` and `src-tauri/`, created the provider/store entry points, wired a typed frontend `health` invoke wrapper, and added the minimal Rust `health` command plus `tauri::Builder` boot path.
+  AC coverage: AC2 PASS. AC3 PASS. AC1 code path is ready but local verification is blocked by missing Ubuntu Tauri native prerequisites (`gdk-3.0`, `gdk-pixbuf-2.0`, `pango`, `atk`) on this host.
+  Command summary: `npm install` PASS. `npm run build` PASS. `cargo build` BLOCKED by missing system GTK/WebKit headers. `npm run tauri dev` BLOCKED by the same host prerequisite gap after Vite started successfully.
+  Next skill must read: `CONTEXT_PACKAGE.md`, `package.json`, `src/app/App.tsx`, `src/app/providers.tsx`, `src/shared/tauri/health.ts`, `src-tauri/src/lib.rs`, `src-tauri/src/commands/health.rs`, `src-tauri/tauri.conf.json`.
+
 ### DISPATCH-005 — Build the Dark Shell, Top Bar, and Lazy Tab Host
 - **Phase**: Phase 0B — Scaffold + Shell
 - **Description**: Replace the starter UI with the Dispatch shell, tab bar, placeholders, and lazy-mount-once tab behavior for heavy surfaces.

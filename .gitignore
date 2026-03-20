@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+package-lock.json.bak
+target/
+src-tauri/target/
+src-tauri/gen/
+.DS_Store

@@ -1,0 +1,36 @@
+{
+  "name": "dispatch",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.10.1",
+    "immer": "11.1.4",
+    "lucide-react": "0.577.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-resizable-panels": "4.7.3",
+    "zustand": "5.0.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.2.2",
+    "@tauri-apps/cli": "2.10.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "esbuild": "0.27.4",
+    "tailwindcss": "4.2.2",
+    "typescript": "5.9.3",
+    "vite": "8.0.1",
+    "vitest": "4.1.0"
+  }
+}
