@@ -4,8 +4,8 @@ export function FilesPlaceholder() {
   return (
     <PlaceholderSurface
       eyebrow="Files"
-      title="Filesystem access remains Rust-owned."
-      description="The scaffold reserves the Files surface without exposing direct browser-side filesystem APIs, matching the locked runtime-boundary ADR."
+      title="Files joins the persistent lazy host so future tree state survives tab switches."
+      description="The browser-side shell still exposes no raw filesystem access. Rust remains the owner once the safe project-scoped file APIs arrive."
     />
   );
 }

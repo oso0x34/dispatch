@@ -4,8 +4,8 @@ export function AgentsPlaceholder() {
   return (
     <PlaceholderSurface
       eyebrow="Agents"
-      title="Terminal and direct dispatch land on the scaffolded Rust boundary."
-      description="The app boot path, tab shell, and typed Tauri invoke layer are in place. PTY session ownership and direct CLI dispatch follow in later tickets."
+      title="Agents is now a lazy surface that only mounts after first open."
+      description="That keeps the shell light on boot while preserving future terminal state once this tab has been visited, matching the roadmap rule for heavier workspaces."
     />
   );
 }

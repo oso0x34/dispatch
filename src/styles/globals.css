@@ -3,16 +3,19 @@
 :root {
   color-scheme: dark;
   --font-sans: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
-  --app-bg: #050816;
-  --app-bg-glow: rgba(28, 74, 186, 0.3);
-  --surface-elevated: rgba(12, 18, 34, 0.82);
-  --surface-soft: rgba(20, 28, 50, 0.8);
-  --surface-border: rgba(144, 167, 221, 0.16);
-  --text-primary: rgba(247, 248, 255, 0.96);
-  --text-secondary: rgba(197, 206, 236, 0.7);
-  --accent-cyan: #86d7ff;
-  --accent-green: #7dd6a2;
-  --accent-error: #ff7f96;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
+  --app-bg: #09090b;
+  --app-bg-deep: #050507;
+  --surface-elevated: rgba(16, 17, 21, 0.95);
+  --surface-soft: rgba(24, 25, 31, 0.92);
+  --surface-muted: rgba(18, 20, 26, 0.92);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --text-primary: rgba(236, 240, 247, 0.96);
+  --text-secondary: rgba(236, 240, 247, 0.58);
+  --accent-blue: #3b82f6;
+  --accent-blue-soft: rgba(59, 130, 246, 0.18);
+  --accent-green: #22c55e;
+  --accent-error: #ef4444;
 }
 
 * {
@@ -29,11 +32,12 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    radial-gradient(circle at top left, var(--app-bg-glow), transparent 40%),
-    radial-gradient(circle at bottom right, rgba(0, 160, 210, 0.15), transparent 26%),
-    var(--app-bg);
+    radial-gradient(circle at top center, rgba(59, 130, 246, 0.18), transparent 28%),
+    radial-gradient(circle at right 20%, rgba(59, 130, 246, 0.08), transparent 22%),
+    linear-gradient(180deg, var(--app-bg-deep), var(--app-bg) 32%, #0b0c10 100%);
   color: var(--text-primary);
   font-family: var(--font-sans);
+  letter-spacing: -0.01em;
 }
 
 button,
@@ -44,12 +48,13 @@ select {
 }
 
 .dispatch-panel {
-  background: var(--surface-elevated);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent 18%),
+    var(--surface-elevated);
   border: 1px solid var(--surface-border);
   box-shadow:
-    0 22px 90px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
+    0 20px 45px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .dispatch-chip {
@@ -59,28 +64,76 @@ select {
 
 .dispatch-surface {
   background:
-    linear-gradient(180deg, rgba(134, 215, 255, 0.08), transparent 55%),
-    rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(134, 215, 255, 0.12);
+    linear-gradient(180deg, rgba(59, 130, 246, 0.06), transparent 42%),
+    var(--surface-muted);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .dispatch-eyebrow {
-  color: var(--accent-cyan);
+  color: var(--accent-blue);
+}
+
+.text-accent-blue {
+  color: var(--accent-blue);
+}
+
+.text-accent-green {
+  color: var(--accent-green);
+}
+
+.text-accent-error {
+  color: var(--accent-error);
+}
+
+.dispatch-kicker {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.dispatch-brand-mark {
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(59, 130, 246, 0.08)),
+    rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(59, 130, 246, 0.32);
+  color: #dbeafe;
+}
+
+.dispatch-control,
+.dispatch-icon-button {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+}
+
+.dispatch-control:hover,
+.dispatch-icon-button:hover {
+  border-color: rgba(59, 130, 246, 0.28);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .dispatch-tab {
   color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
 }
 
 .dispatch-tab:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
 }
 
 .dispatch-tab[data-active="true"] {
-  background: linear-gradient(135deg, rgba(125, 214, 162, 0.18), rgba(134, 215, 255, 0.22));
+  background: var(--accent-blue-soft);
+  border-color: rgba(59, 130, 246, 0.38);
   color: var(--text-primary);
-  box-shadow: inset 0 0 0 1px rgba(134, 215, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+}
+
+.dispatch-icon-button[data-active="true"] {
+  background: var(--accent-blue-soft);
+  border-color: rgba(59, 130, 246, 0.38);
+  color: var(--text-primary);
 }
 
 .dispatch-status-dot {
@@ -90,22 +143,22 @@ select {
 
 .dispatch-status-dot[data-state="ready"] {
   background: var(--accent-green);
-  box-shadow: 0 0 18px rgba(125, 214, 162, 0.5);
+  box-shadow: 0 0 18px rgba(34, 197, 94, 0.45);
 }
 
 .dispatch-status-dot[data-state="loading"],
 .dispatch-status-dot[data-state="idle"] {
-  background: var(--accent-cyan);
-  box-shadow: 0 0 18px rgba(134, 215, 255, 0.45);
+  background: var(--accent-blue);
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.4);
 }
 
 .dispatch-status-dot[data-state="error"] {
   background: var(--accent-error);
-  box-shadow: 0 0 18px rgba(255, 127, 150, 0.45);
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.42);
 }
 
 .dispatch-alert {
-  background: rgba(255, 127, 150, 0.08);
-  border: 1px solid rgba(255, 127, 150, 0.24);
-  color: rgba(255, 220, 226, 0.94);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.24);
+  color: rgba(254, 226, 226, 0.94);
 }

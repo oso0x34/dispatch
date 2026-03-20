@@ -4,8 +4,8 @@ export function ChatPlaceholder() {
   return (
     <PlaceholderSurface
       eyebrow="Chat"
-      title="Chat stays dormant until the backend session and cache layers land."
-      description="This surface is part of the base workspace now so later tickets can wire message state into the same provider and Rust command boundary."
+      title="Chat also uses the lazy mount-once path so later conversation state can survive revisits."
+      description="The shell reserves the tab now and keeps the heavy surface out of the initial boot path until a user actually opens it."
     />
   );
 }

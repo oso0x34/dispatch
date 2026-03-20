@@ -107,6 +107,12 @@
   AC coverage: AC2 PASS. AC3 PASS. AC1 code path is ready but local verification is blocked by missing Ubuntu Tauri native prerequisites (`gdk-3.0`, `gdk-pixbuf-2.0`, `pango`, `atk`) on this host.
   Command summary: `npm install` PASS. `npm run build` PASS. `cargo build` BLOCKED by missing system GTK/WebKit headers. `npm run tauri dev` BLOCKED by the same host prerequisite gap after Vite started successfully.
   Next skill must read: `CONTEXT_PACKAGE.md`, `package.json`, `src/app/App.tsx`, `src/app/providers.tsx`, `src/shared/tauri/health.ts`, `src-tauri/src/lib.rs`, `src-tauri/src/commands/health.rs`, `src-tauri/tauri.conf.json`.
+- 2026-03-19 20:14:11 CDT — `implementer -> DISPATCH-005`
+  Status: PASS_WITH_GAP
+  Summary: Replaced the scaffold landing page with the dark Dispatch shell, added a static project switcher + runtime/status top bar, split panel tabs from overlay surfaces in the UI store, implemented mount-once lazy tab hosting for Agents/Files/History/Chat, and added mount/unmount overlays for Tasks and Settings.
+  AC coverage: AC1 PASS. AC2 PASS. AC3 PASS.
+  Command summary: `npm run build` PASS. `npm test` FAIL because the repo still has no Vitest files; shell/component coverage is scheduled for `DISPATCH-007`.
+  Next skill must read: `src/app/App.tsx`, `src/app/TabHost.tsx`, `src/shared/components/TopBar.tsx`, `src/shared/components/TabBar.tsx`, `src/store/uiSlice.ts`, `src/styles/globals.css`, `src/features/settings/SettingsPlaceholder.tsx`.
 
 ### DISPATCH-005 — Build the Dark Shell, Top Bar, and Lazy Tab Host
 - **Phase**: Phase 0B — Scaffold + Shell

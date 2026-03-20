@@ -4,8 +4,8 @@ export function TasksPlaceholder() {
   return (
     <PlaceholderSurface
       eyebrow="Tasks"
-      title="Kanban state comes later, but the surface is already part of the shell."
-      description="Zustand is bootstrapped for UI state only. Durable task data remains a future Rust-owned concern once SQLite bootstrap is introduced."
+      title="Tasks stays an overlay for now, so it mounts fresh each time it opens."
+      description="The board and task detail flows land later, but this ticket locks in the intended shell behavior: overlays are ephemeral while heavier tabs persist after first open."
     />
   );
 }

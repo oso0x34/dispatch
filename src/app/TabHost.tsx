@@ -1,4 +1,8 @@
-import type { ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
 import { ErrorBoundary } from "../shared/components/ErrorBoundary";
 import { AgentsPlaceholder } from "../features/agents/AgentsPlaceholder";
@@ -6,21 +10,73 @@ import { ChatPlaceholder } from "../features/chat/ChatPlaceholder";
 import { FilesPlaceholder } from "../features/files/FilesPlaceholder";
 import { HistoryPlaceholder } from "../features/history/HistoryPlaceholder";
 import { ProjectsPlaceholder } from "../features/projects/ProjectsPlaceholder";
-import { TasksPlaceholder } from "../features/tasks/TasksPlaceholder";
 import { useDispatchStore } from "./providers";
-import type { TabId } from "../store/uiSlice";
+import {
+  lazyPanelTabs,
+  type PanelTabId,
+} from "../store/uiSlice";
 
-const tabPanels: Record<TabId, ReactNode> = {
+type LazyPanelTabId = (typeof lazyPanelTabs)[number];
+
+const tabPanels: Record<PanelTabId, ReactNode> = {
   projects: <ProjectsPlaceholder />,
   agents: <AgentsPlaceholder />,
-  tasks: <TasksPlaceholder />,
   files: <FilesPlaceholder />,
   history: <HistoryPlaceholder />,
   chat: <ChatPlaceholder />,
 };
 
+function isLazyPanelTab(tab: PanelTabId): tab is LazyPanelTabId {
+  return tab === "agents" || tab === "files" || tab === "history" || tab === "chat";
+}
+
 export function TabHost() {
   const activeTab = useDispatchStore((state) => state.activeTab);
+  const [mountedPanels, setMountedPanels] = useState<Record<LazyPanelTabId, boolean>>(() => ({
+    agents: activeTab === "agents",
+    files: activeTab === "files",
+    history: activeTab === "history",
+    chat: activeTab === "chat",
+  }));
 
-  return <ErrorBoundary>{tabPanels[activeTab]}</ErrorBoundary>;
+  useEffect(() => {
+    if (!isLazyPanelTab(activeTab)) {
+      return;
+    }
+
+    setMountedPanels((current) => {
+      if (current[activeTab]) {
+        return current;
+      }
+
+      return {
+        ...current,
+        [activeTab]: true,
+      };
+    });
+  }, [activeTab]);
+
+  return (
+    <ErrorBoundary>
+      <div className="flex min-h-full flex-col">
+        {activeTab === "projects" ? (
+          <div data-tab-panel="projects">{tabPanels.projects}</div>
+        ) : null}
+
+        {lazyPanelTabs.map((tab) => (
+          mountedPanels[tab] ? (
+            <div
+              key={tab}
+              data-tab-panel={tab}
+              style={{
+                display: activeTab === tab ? "block" : "none",
+              }}
+            >
+              {tabPanels[tab]}
+            </div>
+          ) : null
+        ))}
+      </div>
+    </ErrorBoundary>
+  );
 }

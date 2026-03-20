@@ -4,8 +4,8 @@ export function ProjectsPlaceholder() {
   return (
     <PlaceholderSurface
       eyebrow="Projects"
-      title="Dispatch boots into a real workspace shell."
-      description="The initial scaffold is wired to a typed Rust health command and a shared provider/store boundary so project registration can land without changing the app entry points."
+      title="The shell now opens on a real project surface instead of the bootstrap marketing scaffold."
+      description="Project registration is still static in this phase, but the workspace frame, top bar, and runtime status lane are now in place so project CRUD can attach without reshaping the app shell."
     />
   );
 }
