@@ -66,6 +66,12 @@ impl From<std::io::Error> for AppError {
     }
 }
 
+impl From<rusqlite::Error> for AppError {
+    fn from(error: rusqlite::Error) -> Self {
+        Self::new(error.to_string())
+    }
+}
+
 fn write_panic_log(log_directory: &Path, panic_info: &PanicHookInfo<'_>) -> std::io::Result<()> {
     let timestamp = SystemTime::now();
     let duration = timestamp

@@ -9,6 +9,7 @@ pub mod services;
 pub use app_state::AppState;
 
 use commands::health::health;
+use db::Database;
 
 pub fn configure_app<R: tauri::Runtime>(builder: tauri::Builder<R>) -> tauri::Builder<R> {
     builder
@@ -22,7 +23,10 @@ pub fn run() {
         .setup(|app| {
             let logging_state = logging::init(&app.handle())?;
             error::install_panic_hook(logging_state.log_directory().to_path_buf())?;
+            let database = Database::initialize_for_app(&app.handle())?;
+
             app.manage(logging_state);
+            app.manage(database);
 
             Ok(())
         })

@@ -101,6 +101,12 @@
 
 ## Skill Handoff Ledger
 
+- 2026-03-19 21:52:19 CDT — `implementer -> DISPATCH-009`
+  Status: PASS_WITH_HOST_GAP
+  Summary: Added the first Rust-owned SQLite foundation for Dispatch: `001_init.sql` now creates the Phase 1 `projects`, `tasks`, `agent_sessions`, and `settings` tables with DB-level checks and secondary indexes; `src-tauri/src/db/` now opens the SQLite file in the Tauri app data directory, applies pragmas, tracks applied migrations in `dispatch_migrations`, and exposes a managed `Database` state for later services; and the new plain model structs plus `db_schema_smoke.rs` define and verify the expected persistence surface for follow-on ticket work.
+  AC coverage: AC1 PASS. AC2 PASS in code and test coverage design: the DB bootstrap is Rust-only, resolves from `app_handle.path().app_data_dir()`, and is wired in `src-tauri/src/lib.rs`. AC3 IMPLEMENTED: the new `src-tauri/tests/db_schema_smoke.rs` initializes a fresh DB, checks schema tables/columns/indexes/foreign keys, and asserts migration idempotency.
+  Command summary: `python3` SQLite smoke against `src-tauri/migrations/001_init.sql` PASS. `npm run build` PASS. `cargo test --manifest-path src-tauri/Cargo.toml --test db_schema_smoke` FAIL on this host before Rust compilation reaches the new DB code because the Tauri GTK prerequisites are still missing: `gdk-3.0`, `gdk-pixbuf-2.0`, `pango`, and `atk`.
+  Next skill must read: `src-tauri/migrations/001_init.sql`, `src-tauri/src/db/mod.rs`, `src-tauri/src/db/migrate.rs`, `src-tauri/tests/db_schema_smoke.rs`, `src-tauri/src/lib.rs`, `src-tauri/src/models/project.rs`, `src-tauri/src/models/task.rs`, `src-tauri/src/models/agent_session.rs`, `src-tauri/src/models/setting.rs`.
 - 2026-03-19 21:06:36 CDT — `implementer -> DISPATCH-008`
   Status: PASS_WITH_HOST_GAP
   Summary: Added the first Phase 0B test harness: a Vitest + Testing Library `TabHost` spec that proves heavy tabs mount lazily exactly once and remain mounted across switches, a Rust `app_boot_smoke` integration test that exercises the shared Tauri state/health builder wiring, and a `scripts/smoke/phase-0b-shell.sh` gate that runs both suites and reports the failing step loudly.
