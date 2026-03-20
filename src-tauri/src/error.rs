@@ -77,7 +77,8 @@ fn write_panic_log(log_directory: &Path, panic_info: &PanicHookInfo<'_>) -> std:
     let duration = timestamp
         .duration_since(UNIX_EPOCH)
         .unwrap_or(Duration::ZERO);
-    let thread_name = thread::current().name().unwrap_or("unnamed");
+    let current_thread = thread::current();
+    let thread_name = current_thread.name().unwrap_or("unnamed");
     let panic_message = panic_payload(panic_info);
     let location = panic_info
         .location()

@@ -52,7 +52,7 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
         "fresh bootstrap should create the sqlite file"
     );
 
-    database.with_connection(|connection| {
+    database.with_connection(|connection| -> Result<(), Box<dyn Error>> {
         assert_eq!(pragma_i64(connection, "foreign_keys")?, 1);
         assert_eq!(pragma_string(connection, "journal_mode")?.to_lowercase(), "wal");
 
@@ -176,7 +176,7 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
     drop(database);
 
     let reopened = Database::initialize_at(&database_path)?;
-    reopened.with_connection(|connection| {
+    reopened.with_connection(|connection| -> Result<(), Box<dyn Error>> {
         let applied_migrations = migration_rows(connection)?;
         assert_eq!(
             applied_migrations,

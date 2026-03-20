@@ -1,5 +1,5 @@
 mod app_state;
-mod commands;
+pub mod commands;
 pub mod db;
 pub mod error;
 pub mod logging;
@@ -8,13 +8,24 @@ pub mod services;
 
 pub use app_state::AppState;
 
-use commands::health::health;
+use tauri::Manager;
+
+use commands::{
+    health::health,
+    projects::{create_project, delete_project, get_project, list_projects},
+};
 use db::Database;
 
 pub fn configure_app<R: tauri::Runtime>(builder: tauri::Builder<R>) -> tauri::Builder<R> {
     builder
         .manage(AppState::default())
-        .invoke_handler(tauri::generate_handler![health])
+        .invoke_handler(tauri::generate_handler![
+            health,
+            create_project,
+            list_projects,
+            get_project,
+            delete_project
+        ])
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
