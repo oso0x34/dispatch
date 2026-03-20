@@ -11,11 +11,16 @@ use commands::health::health;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  logging::init();
+    tauri::Builder::default()
+        .manage(AppState::default())
+        .setup(|app| {
+            let logging_state = logging::init(&app.handle())?;
+            error::install_panic_hook(logging_state.log_directory().to_path_buf())?;
+            app.manage(logging_state);
 
-  tauri::Builder::default()
-    .manage(AppState::default())
-    .invoke_handler(tauri::generate_handler![health])
-    .run(tauri::generate_context!())
-    .expect("error while running Dispatch");
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![health])
+        .run(tauri::generate_context!())
+        .expect("error while running Dispatch");
 }

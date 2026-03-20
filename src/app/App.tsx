@@ -191,7 +191,7 @@ export function App() {
               </header>
 
               <div className="min-h-0 flex-1 overflow-auto px-4 py-4 sm:px-5 sm:py-5">
-                <ErrorBoundary>
+                <ErrorBoundary surfaceName={`${overlayTitle} overlay`}>
                   {activeOverlay === "settings" ? (
                     <SettingsPlaceholder
                       bootStatus={bootStatus}

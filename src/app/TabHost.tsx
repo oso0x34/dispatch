@@ -18,12 +18,27 @@ import {
 
 type LazyPanelTabId = (typeof lazyPanelTabs)[number];
 
-const tabPanels: Record<PanelTabId, ReactNode> = {
-  projects: <ProjectsPlaceholder />,
-  agents: <AgentsPlaceholder />,
-  files: <FilesPlaceholder />,
-  history: <HistoryPlaceholder />,
-  chat: <ChatPlaceholder />,
+const tabPanels: Record<PanelTabId, { label: string; content: ReactNode }> = {
+  projects: {
+    label: "Projects tab",
+    content: <ProjectsPlaceholder />,
+  },
+  agents: {
+    label: "Agents tab",
+    content: <AgentsPlaceholder />,
+  },
+  files: {
+    label: "Files tab",
+    content: <FilesPlaceholder />,
+  },
+  history: {
+    label: "History tab",
+    content: <HistoryPlaceholder />,
+  },
+  chat: {
+    label: "Chat tab",
+    content: <ChatPlaceholder />,
+  },
 };
 
 function isLazyPanelTab(tab: PanelTabId): tab is LazyPanelTabId {
@@ -57,26 +72,30 @@ export function TabHost() {
   }, [activeTab]);
 
   return (
-    <ErrorBoundary>
-      <div className="flex min-h-full flex-col">
-        {activeTab === "projects" ? (
-          <div data-tab-panel="projects">{tabPanels.projects}</div>
-        ) : null}
+    <div className="flex min-h-full flex-col">
+      {activeTab === "projects" ? (
+        <div data-tab-panel="projects">
+          <ErrorBoundary surfaceName={tabPanels.projects.label}>
+            {tabPanels.projects.content}
+          </ErrorBoundary>
+        </div>
+      ) : null}
 
-        {lazyPanelTabs.map((tab) => (
-          mountedPanels[tab] ? (
-            <div
-              key={tab}
-              data-tab-panel={tab}
-              style={{
-                display: activeTab === tab ? "block" : "none",
-              }}
-            >
-              {tabPanels[tab]}
-            </div>
-          ) : null
-        ))}
-      </div>
-    </ErrorBoundary>
+      {lazyPanelTabs.map((tab) => (
+        mountedPanels[tab] ? (
+          <div
+            key={tab}
+            data-tab-panel={tab}
+            style={{
+              display: activeTab === tab ? "block" : "none",
+            }}
+          >
+            <ErrorBoundary surfaceName={tabPanels[tab].label}>
+              {tabPanels[tab].content}
+            </ErrorBoundary>
+          </div>
+        ) : null
+      ))}
+    </div>
   );
 }

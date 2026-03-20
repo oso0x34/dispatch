@@ -101,6 +101,12 @@
 
 ## Skill Handoff Ledger
 
+- 2026-03-19 20:44:28 CDT — `implementer -> DISPATCH-007`
+  Status: PASS_WITH_HOST_GAP
+  Summary: Added Rust-owned startup logging that resolves the Tauri app log directory, creates `dispatch.log`, rotates archived `dispatch.*.log` files, and installs a panic hook that writes timestamped `panic-*.log` files beside the main log. Reworked the shared React error boundary into a recoverable surface fallback, wrapped each panel tab individually, and kept overlay failures scoped to their own boundary so the shell stays mounted.
+  AC coverage: AC1 IMPLEMENTED, runtime verification blocked by missing Linux Tauri system packages on this host. AC2 PASS by code path and panic file writer wiring. AC3 PASS.
+  Command summary: `npm run build` PASS. `cargo check` BLOCKED by missing `gdk-3.0`, `gdk-pixbuf-2.0`, and `pango` pkg-config packages on this machine before Cargo could finish the Tauri dependency graph. `rustfmt --check src/logging.rs src/error.rs src/lib.rs` PASS.
+  Next skill must read: `src-tauri/src/logging.rs`, `src-tauri/src/error.rs`, `src-tauri/src/lib.rs`, `src/shared/components/ErrorBoundary.tsx`, `src/app/TabHost.tsx`, `src/app/App.tsx`.
 - 2026-03-19 20:02:24 CDT — `implementer -> DISPATCH-005 / DISPATCH-006`
   Status: PARTIAL_PASS
   Summary: Scaffolded the real Tauri v2 + React 19 workspace, added the canonical repo layout under `src/` and `src-tauri/`, created the provider/store entry points, wired a typed frontend `health` invoke wrapper, and added the minimal Rust `health` command plus `tauri::Builder` boot path.
