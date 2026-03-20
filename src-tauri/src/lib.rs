@@ -13,6 +13,9 @@ use tauri::Manager;
 use commands::{
     health::health,
     projects::{create_project, delete_project, get_project, list_projects},
+    settings::{
+        clear_secret, get_secret_status, get_setting, list_settings, set_secret, set_setting,
+    },
 };
 use db::Database;
 
@@ -24,7 +27,13 @@ pub fn configure_app<R: tauri::Runtime>(builder: tauri::Builder<R>) -> tauri::Bu
             create_project,
             list_projects,
             get_project,
-            delete_project
+            delete_project,
+            get_setting,
+            set_setting,
+            list_settings,
+            set_secret,
+            get_secret_status,
+            clear_secret
         ])
 }
 

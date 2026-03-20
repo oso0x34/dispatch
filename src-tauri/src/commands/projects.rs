@@ -1,7 +1,12 @@
 use serde::{Deserialize, Serialize};
 use tauri::State;
 
-use crate::{db::Database, error::AppResult, models::Project, services::project_registry};
+use crate::{
+    db::Database,
+    error::{AppError, AppResult},
+    models::Project,
+    services::project_registry,
+};
 
 type CommandResult<T> = Result<T, String>;
 const PROJECT_ROOT_RELATIVE_PATH: &str = ".";
@@ -56,18 +61,38 @@ pub fn delete_project_with_db(database: &Database, project_id: String) -> AppRes
     project_registry::delete_project(database, &project_id)
 }
 
+fn project_command_error_message(error: AppError) -> String {
+    let message = error.message();
+
+    if message == "project name cannot be blank" {
+        return message.to_string();
+    }
+
+    if message.starts_with("project root is already registered") {
+        return "project root is already registered".to_string();
+    }
+
+    if message.starts_with("failed to canonicalize project root")
+        || message.starts_with("project root must be a directory")
+    {
+        return "project root is invalid or inaccessible".to_string();
+    }
+
+    "project command failed".to_string()
+}
+
 #[tauri::command]
 pub fn create_project(
     database: State<'_, Database>,
     name: String,
     root_path: String,
 ) -> CommandResult<ProjectPayload> {
-    create_project_with_db(database.inner(), name, root_path).map_err(|error| error.to_string())
+    create_project_with_db(database.inner(), name, root_path).map_err(project_command_error_message)
 }
 
 #[tauri::command]
 pub fn list_projects(database: State<'_, Database>) -> CommandResult<Vec<ProjectPayload>> {
-    list_projects_with_db(database.inner()).map_err(|error| error.to_string())
+    list_projects_with_db(database.inner()).map_err(project_command_error_message)
 }
 
 #[tauri::command]
@@ -75,10 +100,10 @@ pub fn get_project(
     database: State<'_, Database>,
     project_id: String,
 ) -> CommandResult<Option<ProjectPayload>> {
-    get_project_with_db(database.inner(), project_id).map_err(|error| error.to_string())
+    get_project_with_db(database.inner(), project_id).map_err(project_command_error_message)
 }
 
 #[tauri::command]
 pub fn delete_project(database: State<'_, Database>, project_id: String) -> CommandResult<bool> {
-    delete_project_with_db(database.inner(), project_id).map_err(|error| error.to_string())
+    delete_project_with_db(database.inner(), project_id).map_err(project_command_error_message)
 }
