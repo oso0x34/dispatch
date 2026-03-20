@@ -101,6 +101,12 @@
 
 ## Skill Handoff Ledger
 
+- 2026-03-19 21:06:36 CDT — `implementer -> DISPATCH-008`
+  Status: PASS_WITH_HOST_GAP
+  Summary: Added the first Phase 0B test harness: a Vitest + Testing Library `TabHost` spec that proves heavy tabs mount lazily exactly once and remain mounted across switches, a Rust `app_boot_smoke` integration test that exercises the shared Tauri state/health builder wiring, and a `scripts/smoke/phase-0b-shell.sh` gate that runs both suites and reports the failing step loudly.
+  AC coverage: AC1 PASS. AC2 IMPLEMENTED and wired against the real `AppState` + `health` command path through a shared `configure_app(...)` builder. AC3 PASS.
+  Command summary: `npm test -- src/app/__tests__/TabHost.test.tsx` PASS. `npm run build` PASS. `scripts/smoke/phase-0b-shell.sh` FAIL on this host because Cargo cannot compile Tauri GTK bindings without `gdk-3.0`, `gdk-pixbuf-2.0`, `pango`, and `atk` pkg-config packages installed; the React lane passes and the script now reports `phase-0b shell smoke failed during: Rust app boot smoke`.
+  Next skill must read: `src/app/__tests__/TabHost.test.tsx`, `src-tauri/tests/app_boot_smoke.rs`, `scripts/smoke/phase-0b-shell.sh`, `src-tauri/src/lib.rs`, `src-tauri/Cargo.toml`.
 - 2026-03-19 20:44:28 CDT — `implementer -> DISPATCH-007`
   Status: PASS_WITH_HOST_GAP
   Summary: Added Rust-owned startup logging that resolves the Tauri app log directory, creates `dispatch.log`, rotates archived `dispatch.*.log` files, and installs a panic hook that writes timestamped `panic-*.log` files beside the main log. Reworked the shared React error boundary into a recoverable surface fallback, wrapped each panel tab individually, and kept overlay failures scoped to their own boundary so the shell stays mounted.
