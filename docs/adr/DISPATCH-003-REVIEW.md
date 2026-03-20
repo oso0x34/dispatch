@@ -1,0 +1,27 @@
+# DISPATCH-003 Review
+
+## Verdict
+
+NEEDS_FIXES
+
+The new docs cover the requested verification lanes and architecture gates, but the review gate is not ready to advance. The scope-authority chain is broken, the Phase `0A` checklist gate does not actually require checking the roadmap/PRD sources it claims to reconcile, one published "exact repo location" conflicts with the canonical repo layout, and Phase `7` now requires a smoke artifact that no Phase `7` ticket owns.
+
+## Acceptance Criteria Checklist
+
+- [x] `docs/test-strategy.md` maps Rust unit tests, Rust integration tests, React component tests, and shell smoke scripts to exact repo locations.
+- [x] `docs/checklists/v1-scope.md` includes quality gates for PTY single creation, structured dispatch, single DB owner, single filesystem owner, early `agent_sessions`, and verification per phase.
+- [x] The document set explicitly records that `ROADMAP-v2.md` supersedes conflicting `PRD.md` items on voice, Browser, and PR automation scope.
+
+## Issues Found
+
+1. Major: The new authority references point to a nonexistent roadmap file. [docs/test-strategy.md:5](/home/oso0x/projects/dispatch/docs/test-strategy.md#L5), [docs/test-strategy.md:29](/home/oso0x/projects/dispatch/docs/test-strategy.md#L29), [docs/checklists/v1-scope.md:7](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md#L7), [docs/checklists/v1-scope.md:8](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md#L8), and [docs/checklists/v1-scope.md:60](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md#L60) make `ROADMAP-v2.md` the release-scope authority, but the checked-in roadmap is [ROADMAP.md:2](/home/oso0x/projects/dispatch/ROADMAP.md#L2) and there is no `ROADMAP-v2.md` in this repo. That breaks the written source-of-truth chain DISPATCH-003 is supposed to lock.
+2. Medium: The final Phase `0A` gate is weaker than the ticket objective. [docs/checklists/v1-scope.md:44](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md#L44) only requires consistency across the ADR set, the checklist, and [docs/test-strategy.md](/home/oso0x/projects/dispatch/docs/test-strategy.md), while [docs/test-strategy.md:29](/home/oso0x/projects/dispatch/docs/test-strategy.md#L29) and [TICKETS.md:71](/home/oso0x/projects/dispatch/TICKETS.md#L71) define Phase `0A` as the point where roadmap/PRD contradictions are closed. As written, the checklist can be marked complete without explicitly re-reviewing `PRD.md` and the authoritative roadmap file.
+3. Medium: One of the published "exact repo locations" conflicts with the canonical layout. [docs/test-strategy.md:30](/home/oso0x/projects/dispatch/docs/test-strategy.md#L30) and [docs/checklists/v1-scope.md:45](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md#L45) lock the shell test to `src/features/app/__tests__/TabHost.test.tsx`, but the canonical repo layout places app-shell code under [ROADMAP.md:147](/home/oso0x/projects/dispatch/ROADMAP.md#L147) and [ROADMAP.md:148](/home/oso0x/projects/dispatch/ROADMAP.md#L148), and the roadmap/ticket file lists put `TabHost.tsx` at [ROADMAP.md:281](/home/oso0x/projects/dispatch/ROADMAP.md#L281) and [TICKETS.md:114](/home/oso0x/projects/dispatch/TICKETS.md#L114) under `src/app/TabHost.tsx`. That path is not an accurate "exact repo location" under the current layout contract.
+4. Medium: Phase `7` now has a locked smoke requirement with no ticket owner. [docs/test-strategy.md:37](/home/oso0x/projects/dispatch/docs/test-strategy.md#L37) and [docs/checklists/v1-scope.md:52](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md#L52) require `scripts/smoke/phase-7-openclaw.sh`, but the Phase `7` implementation tickets at [TICKETS.md:540](/home/oso0x/projects/dispatch/TICKETS.md#L540), [TICKETS.md:556](/home/oso0x/projects/dispatch/TICKETS.md#L556), and [TICKETS.md:572](/home/oso0x/projects/dispatch/TICKETS.md#L572) do not include that script in their acceptance criteria or key files. The new docs make Phase `7` incomplete until an artifact exists that the execution plan never assigns.
+
+## Fixes Required
+
+- Normalize the roadmap authority reference across the document set. Either add a real `ROADMAP-v2.md` and make it authoritative, or update [docs/test-strategy.md](/home/oso0x/projects/dispatch/docs/test-strategy.md), [docs/checklists/v1-scope.md](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md), and [TICKETS.md](/home/oso0x/projects/dispatch/TICKETS.md) to point to [ROADMAP.md](/home/oso0x/projects/dispatch/ROADMAP.md) as the checked-in v2 roadmap snapshot.
+- Strengthen the Phase `0A` checklist gate in [docs/checklists/v1-scope.md](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md) so it explicitly requires contradiction review against `PRD.md` and the authoritative roadmap file, not only the internal Phase `0A` docs.
+- Align the `TabHost` test location across [docs/test-strategy.md](/home/oso0x/projects/dispatch/docs/test-strategy.md), [docs/checklists/v1-scope.md](/home/oso0x/projects/dispatch/docs/checklists/v1-scope.md), [ROADMAP.md](/home/oso0x/projects/dispatch/ROADMAP.md), and [TICKETS.md](/home/oso0x/projects/dispatch/TICKETS.md). Either move the planned test to `src/app/__tests__/TabHost.test.tsx` or update the canonical repo layout to include `src/features/app/`.
+- Add explicit Phase `7` ownership for `scripts/smoke/phase-7-openclaw.sh` in [TICKETS.md](/home/oso0x/projects/dispatch/TICKETS.md), or remove that script from the locked Phase `7` verification matrix until a ticket owns it.

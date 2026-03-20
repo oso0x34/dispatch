@@ -142,14 +142,14 @@
 - **Phase**: Phase 0B — Scaffold + Shell
 - **Description**: Create the first shell test harness so the app can prove boot viability, lazy mounting, and health-command availability in CI and local smoke runs.
 - **Acceptance Criteria**:
-  - `src/features/app/__tests__/TabHost.test.tsx` verifies lazy-mount-once behavior for heavy tabs.
+  - `src/app/__tests__/TabHost.test.tsx` verifies lazy-mount-once behavior for heavy tabs.
   - `src-tauri/tests/app_boot_smoke.rs` validates app state boot and health command response.
   - `scripts/smoke/phase-0b-shell.sh` runs the shell smoke flow and fails loudly on boot regressions.
 - **Dependencies**: DISPATCH-005, DISPATCH-006
 - **Estimated Hours**: 3
 - **Priority**: P1
 - **Key Files**:
-  - `src/features/app/__tests__/TabHost.test.tsx`
+  - `src/app/__tests__/TabHost.test.tsx`
   - `src-tauri/tests/app_boot_smoke.rs`
   - `scripts/smoke/phase-0b-shell.sh`
 
