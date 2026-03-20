@@ -52,15 +52,15 @@ export function SettingsPlaceholder({
             <p className="dispatch-kicker text-[0.66rem] font-semibold uppercase tracking-[0.24em]">
               Runtime
             </p>
-            <h3 className="mt-2 text-base font-semibold text-white">Shell health</h3>
+            <h3 className="dispatch-heading mt-2 text-base font-semibold">Shell health</h3>
           </div>
 
-          <span className="dispatch-chip rounded-full px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-white/72">
+          <span className="dispatch-chip dispatch-text-strong rounded-full px-3 py-1.5 text-xs font-medium uppercase tracking-[0.2em]">
             {bootStatus}
           </span>
         </div>
 
-        <p className="mt-3 text-sm leading-6 text-white/62">{runtimeCopy}</p>
+        <p className="dispatch-text-secondary mt-3 text-sm leading-6">{runtimeCopy}</p>
       </section>
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -69,8 +69,8 @@ export function SettingsPlaceholder({
             key={section.title}
             className="dispatch-surface rounded-[20px] p-4"
           >
-            <h3 className="text-sm font-semibold text-white">{section.title}</h3>
-            <p className="mt-2 text-sm leading-6 text-white/58">
+            <h3 className="dispatch-heading text-sm font-semibold">{section.title}</h3>
+            <p className="dispatch-text-secondary mt-2 text-sm leading-6">
               {section.description}
             </p>
           </section>

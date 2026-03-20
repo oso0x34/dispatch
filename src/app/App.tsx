@@ -153,7 +153,7 @@ export function App() {
 
       {activeOverlay ? (
         <div
-          className="fixed inset-0 z-50 bg-black/60 px-4 py-4 backdrop-blur-sm sm:px-5 sm:py-5"
+          className="dispatch-overlay-backdrop fixed inset-0 z-50 px-4 py-4 backdrop-blur-sm sm:px-5 sm:py-5"
           onClick={closeOverlay}
         >
           <div className="mx-auto flex h-full w-full max-w-[1600px] items-start justify-end">
@@ -166,15 +166,15 @@ export function App() {
               className="dispatch-panel flex h-full max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-[24px]"
               onClick={(event) => event.stopPropagation()}
             >
-              <header className="flex items-start justify-between gap-4 border-b border-white/6 px-5 py-4 sm:px-6">
+              <header className="dispatch-divider flex items-start justify-between gap-4 border-b px-5 py-4 sm:px-6">
                 <div>
                   <p className="dispatch-kicker text-[0.68rem] font-semibold uppercase tracking-[0.24em]">
                     Overlay
                   </p>
-                  <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                  <h2 className="dispatch-heading mt-2 text-xl font-semibold tracking-tight">
                     {overlayTitle}
                   </h2>
-                  <p className="mt-2 max-w-xl text-sm leading-6 text-white/55">
+                  <p className="dispatch-text-secondary mt-2 max-w-xl text-sm leading-6">
                     {overlayDescription}
                   </p>
                 </div>

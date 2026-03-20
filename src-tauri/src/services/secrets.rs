@@ -101,10 +101,7 @@ pub fn clear_secret(key: &str) -> AppResult<SecretStatus> {
     clear_secret_with_store(&KeyringSecretStore, key)
 }
 
-pub fn clear_secret_with_store(
-    store: &impl SecretStore,
-    key: &str,
-) -> AppResult<SecretStatus> {
+pub fn clear_secret_with_store(store: &impl SecretStore, key: &str) -> AppResult<SecretStatus> {
     let key = normalize_secret_key(key)?;
 
     store.clear_secret(&key)?;

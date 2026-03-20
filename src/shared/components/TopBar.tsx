@@ -1,14 +1,13 @@
 import {
   Activity,
   AlertTriangle,
-  ChevronsUpDown,
-  FolderTree,
   Settings2,
   ShieldCheck,
 } from "lucide-react";
 
 import type { HealthResponse } from "../tauri/health";
 import { useDispatchStore } from "../../app/providers";
+import { ProjectSwitcher } from "../../features/projects/ProjectSwitcher";
 import type { BootStatus } from "../../store/uiSlice";
 
 type TopBarProps = {
@@ -44,37 +43,13 @@ export function TopBar({ bootStatus, bootError, health }: TopBarProps) {
               <p className="dispatch-kicker text-[0.7rem] font-semibold uppercase tracking-[0.24em]">
                 Dispatch
               </p>
-              <h1 className="mt-1 text-lg font-semibold tracking-tight text-white sm:text-[1.15rem]">
+              <h1 className="dispatch-heading mt-1 text-lg font-semibold tracking-tight sm:text-[1.15rem]">
                 Desktop command center
               </h1>
             </div>
           </div>
 
-          <button
-            type="button"
-            aria-disabled="true"
-            disabled
-            className="dispatch-control flex min-w-[15rem] items-center justify-between gap-3 rounded-xl px-4 py-3 text-left disabled:cursor-default disabled:opacity-75"
-          >
-            <div className="flex items-center gap-3">
-              <FolderTree
-                size={16}
-                className="text-accent-blue"
-              />
-
-              <div className="min-w-0">
-                <p className="dispatch-kicker text-[0.66rem] font-semibold uppercase tracking-[0.24em]">
-                  Project
-                </p>
-                <p className="truncate text-sm font-medium text-white">TX Flows</p>
-              </div>
-            </div>
-
-            <ChevronsUpDown
-              size={14}
-              className="text-white/45"
-            />
-          </button>
+          <ProjectSwitcher />
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -85,8 +60,8 @@ export function TopBar({ bootStatus, bootError, health }: TopBarProps) {
             />
 
             <div className="flex min-w-0 flex-col">
-              <span className="truncate font-medium text-white">{statusLabel}</span>
-              <span className="truncate text-xs text-white/48">{statusDetail}</span>
+              <span className="dispatch-text-primary truncate font-medium">{statusLabel}</span>
+              <span className="dispatch-text-muted truncate text-xs">{statusDetail}</span>
             </div>
 
             {bootStatus === "ready" ? (

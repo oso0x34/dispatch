@@ -28,7 +28,7 @@ export function TabBar() {
   const activeSurface = activeOverlay ?? activeTab;
 
   return (
-    <div className="border-y border-white/6 px-3 py-3 sm:px-4">
+    <div className="dispatch-divider border-y px-3 py-3 sm:px-4">
       <div className="flex flex-wrap gap-2">
         {tabDefinitions.map((tab) => {
           const Icon = tabIcons[tab.id];

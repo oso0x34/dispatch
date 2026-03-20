@@ -1,9 +1,10 @@
 # DISPATCH-010 Review
 Verdict: PASS
 
-- Fixed one issue before verdict: `list_settings` used SQLite `LIKE`, which is case-insensitive for ASCII, so a non-secret key such as `Dispatch.Secret.theme` was incorrectly hidden from public settings results. Switched the filter to `GLOB` for exact-case secret marker matching and added a regression test.
-- Codex refactored secrets.rs to remove SQLite markers (secrets are keychain-only) but left stale references in commands/settings.rs and tests. VICAM fixed 10 compile errors: removed `&database` args from `_with_store` calls, removed `secret_marker_key`/`secret_marker_glob_pattern`/`is_secret_marker_key` references, updated test assertions to match new marker-free approach.
-- Verified non-secret settings persist in SQLite, secret APIs expose `keychain | env | missing`, raw secret values are never returned by the command surface and never written to SQLite, SQL uses bound parameters, and no `unwrap()` is used on user input paths in the reviewed code.
-- Verification: `cargo test` — 20 passed, 0 failed. `npm run build` — clean. `npx vitest run` — 2 passed.
+Findings fixed during review:
+- Major: Secret writes were adding `dispatch.secret.*` marker rows to the SQLite `settings` table, which violated the DISPATCH-010 contract that non-secret settings live in SQLite while secrets stay in keychain/env only. Fixed by removing SQLite writes from the secret service in [src-tauri/src/services/secrets.rs](/home/oso0x/projects/dispatch/src-tauri/src/services/secrets.rs#L52) and [src-tauri/src/services/secrets.rs](/home/oso0x/projects/dispatch/src-tauri/src/services/secrets.rs#L100).
+- Minor: The Tauri command layer depended on matching internal `AppError` strings to decide which input errors to expose. Fixed by validating setting/secret inputs before invoking the storage layer in [src-tauri/src/commands/settings.rs](/home/oso0x/projects/dispatch/src-tauri/src/commands/settings.rs#L109) and [src-tauri/src/commands/settings.rs](/home/oso0x/projects/dispatch/src-tauri/src/commands/settings.rs#L153).
+- Regression coverage now proves secret operations do not create SQLite rows and that legacy secret-shaped rows remain hidden from public settings APIs in [src-tauri/tests/settings_secret_tests.rs](/home/oso0x/projects/dispatch/src-tauri/tests/settings_secret_tests.rs#L128) and [src-tauri/tests/settings_secret_tests.rs](/home/oso0x/projects/dispatch/src-tauri/tests/settings_secret_tests.rs#L184).
 
-Reviewed by: Codex (initial review + GLOB fix) + VICAM (compile error fixes + final verification)
+Verification:
+- `PATH=$HOME/.cargo/bin:$PATH cargo test --manifest-path src-tauri/Cargo.toml` PASS

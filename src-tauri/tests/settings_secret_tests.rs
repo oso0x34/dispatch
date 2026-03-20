@@ -150,7 +150,11 @@ fn list_settings_hides_legacy_secret_rows_already_in_sqlite() -> Result<(), Box<
             INSERT INTO settings (key, value_json, updated_at)
             VALUES (?1, ?2, ?3)
             ",
-            params!["dispatch.secret.OPENAI_API_KEY", r#"{"kind":"keychain_presence"}"#, 2_i64],
+            params![
+                "dispatch.secret.OPENAI_API_KEY",
+                r#"{"kind":"keychain_presence"}"#,
+                2_i64
+            ],
         )?;
 
         Ok(())
@@ -187,8 +191,7 @@ fn secret_storage_never_writes_secret_rows_to_sqlite_or_public_settings(
     let secret_value = "super-secret-value";
 
     let setting = set_setting_with_db(&database, "ui.layout".to_string(), json!("split"))?;
-    let secret_status =
-        secrets::set_secret_with_store(&store, &secret_key, secret_value)?;
+    let secret_status = secrets::set_secret_with_store(&store, &secret_key, secret_value)?;
 
     assert_eq!(secret_status, SecretStatus::Keychain);
     assert_eq!(
@@ -197,11 +200,14 @@ fn secret_storage_never_writes_secret_rows_to_sqlite_or_public_settings(
         "secret storage must not leak into public settings APIs"
     );
 
-    let total_settings_rows = database.with_connection(|connection| -> Result<_, Box<dyn Error>> {
-        Ok(connection.query_row("SELECT COUNT(*) FROM settings", [], |row| {
-            row.get::<_, i64>(0)
-        })?)
-    })?;
+    let total_settings_rows =
+        database.with_connection(|connection| -> Result<_, Box<dyn Error>> {
+            Ok(
+                connection.query_row("SELECT COUNT(*) FROM settings", [], |row| {
+                    row.get::<_, i64>(0)
+                })?,
+            )
+        })?;
     assert_eq!(
         total_settings_rows, 1,
         "secret operations must not add rows to the settings table"
@@ -215,25 +221,34 @@ fn secret_storage_never_writes_secret_rows_to_sqlite_or_public_settings(
             |row| row.get::<_, i64>(0),
         )?)
     })?;
-    assert_eq!(raw_row_count, 0, "SQLite must never store the raw secret value");
+    assert_eq!(
+        raw_row_count, 0,
+        "SQLite must never store the raw secret value"
+    );
 
-    let raw_key_row_count = database.with_connection(|connection| -> Result<_, Box<dyn Error>> {
-        Ok(connection.query_row(
-            "SELECT COUNT(*) FROM settings WHERE key = ?1",
-            [secret_key.as_str()],
-            |row| row.get::<_, i64>(0),
-        )?)
-    })?;
-    assert_eq!(raw_key_row_count, 0, "secret keys must not be written to SQLite");
+    let raw_key_row_count =
+        database.with_connection(|connection| -> Result<_, Box<dyn Error>> {
+            Ok(connection.query_row(
+                "SELECT COUNT(*) FROM settings WHERE key = ?1",
+                [secret_key.as_str()],
+                |row| row.get::<_, i64>(0),
+            )?)
+        })?;
+    assert_eq!(
+        raw_key_row_count, 0,
+        "secret keys must not be written to SQLite"
+    );
 
     let cleared_status = secrets::clear_secret_with_store(&store, &secret_key)?;
     assert_eq!(cleared_status, SecretStatus::Missing);
 
     let post_clear_row_count =
         database.with_connection(|connection| -> Result<_, Box<dyn Error>> {
-            Ok(connection.query_row("SELECT COUNT(*) FROM settings", [], |row| {
-                row.get::<_, i64>(0)
-            })?)
+            Ok(
+                connection.query_row("SELECT COUNT(*) FROM settings", [], |row| {
+                    row.get::<_, i64>(0)
+                })?,
+            )
         })?;
     assert_eq!(post_clear_row_count, 1);
 
