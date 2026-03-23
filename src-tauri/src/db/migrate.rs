@@ -12,11 +12,38 @@ struct Migration {
     sql: &'static str,
 }
 
-const MIGRATIONS: &[Migration] = &[Migration {
-    version: 1,
-    name: "001_init",
-    sql: include_str!("../../migrations/001_init.sql"),
-}];
+const MIGRATIONS: &[Migration] = &[
+    Migration {
+        version: 1,
+        name: "001_init",
+        sql: include_str!("../../migrations/001_init.sql"),
+    },
+    Migration {
+        version: 2,
+        name: "002_agent_profiles",
+        sql: include_str!("../../migrations/002_agent_profiles.sql"),
+    },
+    Migration {
+        version: 3,
+        name: "003_task_metadata",
+        sql: include_str!("../../migrations/003_task_metadata.sql"),
+    },
+    Migration {
+        version: 4,
+        name: "004_save_points",
+        sql: include_str!("../../migrations/004_save_points.sql"),
+    },
+    Migration {
+        version: 5,
+        name: "005_chat_cache",
+        sql: include_str!("../../migrations/005_chat_cache.sql"),
+    },
+    Migration {
+        version: 6,
+        name: "006_native_cli_profiles",
+        sql: include_str!("../../migrations/006_native_cli_profiles.sql"),
+    },
+];
 
 pub(crate) fn run_pending_migrations(connection: &mut Connection) -> AppResult<Vec<&'static str>> {
     ensure_migrations_table(connection)?;

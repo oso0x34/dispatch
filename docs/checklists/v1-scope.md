@@ -58,7 +58,8 @@ Use this checklist to evaluate new tickets, PRs, and scope-change requests again
 ## Scope Notes
 
 - [ ] `ROADMAP-v2.md` resolves the current PRD drift: voice input is post-v1, Browser is post-v1/experimental, and PR creation/review automation is outside the v1 build path.
-- [ ] Browser remains a deferred surface after v1 release; any later implementation is handled as a separate post-v1 lane.
+- [ ] Browser remains a deferred surface after v1 release; any later implementation is handled as a separate post-v1 lane behind a default-off flag and a localhost-only allowlist.
+- [ ] Browser preview targets remain limited to `http://localhost:*` and `http://127.0.0.1:*` until a separate post-v1 decision expands the policy.
 - [ ] Voice input remains deferred; no microphone UI or partial transcription flow lands in v1.
 - [ ] Branch-safe revert stays out of v1; restore in v1 works directly from Dispatch save points without creating a new branch commit.
 - [ ] PR creation and review automation remain post-v1 even though chat and review routing are in v1.

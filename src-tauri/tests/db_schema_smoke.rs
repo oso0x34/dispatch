@@ -54,23 +54,52 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
 
     database.with_connection(|connection| -> Result<(), Box<dyn Error>> {
         assert_eq!(pragma_i64(connection, "foreign_keys")?, 1);
-        assert_eq!(pragma_string(connection, "journal_mode")?.to_lowercase(), "wal");
+        assert_eq!(
+            pragma_string(connection, "journal_mode")?.to_lowercase(),
+            "wal"
+        );
 
         let tables = schema_object_names(connection, "table")?;
         let expected_tables = BTreeSet::from([
+            "agent_profiles".to_string(),
             "agent_sessions".to_string(),
+            "chat_messages".to_string(),
             "dispatch_migrations".to_string(),
             "projects".to_string(),
+            "save_points".to_string(),
             "settings".to_string(),
             "tasks".to_string(),
         ]);
 
         assert_eq!(tables, expected_tables);
-        assert!(
-            !tables.contains("chat_messages"),
-            "DISPATCH-008 should only create the four ticket-scoped domain tables plus migration tracking"
-        );
 
+        assert_eq!(
+            table_columns(connection, "agent_profiles")?,
+            vec![
+                "id".to_string(),
+                "name".to_string(),
+                "program".to_string(),
+                "args_json".to_string(),
+                "env_json".to_string(),
+                "cwd_json".to_string(),
+                "created_at".to_string(),
+                "updated_at".to_string(),
+            ]
+        );
+        assert_eq!(
+            table_columns(connection, "chat_messages")?,
+            vec![
+                "id".to_string(),
+                "conversation_id".to_string(),
+                "project_id".to_string(),
+                "agent_session_id".to_string(),
+                "role".to_string(),
+                "author_kind".to_string(),
+                "body_markdown".to_string(),
+                "metadata_json".to_string(),
+                "created_at".to_string(),
+            ]
+        );
         assert_eq!(
             table_columns(connection, "projects")?,
             vec![
@@ -98,6 +127,11 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
                 "created_at".to_string(),
                 "updated_at".to_string(),
                 "completed_at".to_string(),
+                "priority".to_string(),
+                "labels_json".to_string(),
+                "subtasks_json".to_string(),
+                "review_notes_markdown".to_string(),
+                "assignee".to_string(),
             ]
         );
         assert_eq!(
@@ -129,13 +163,29 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
                 "updated_at".to_string(),
             ]
         );
+        assert_eq!(
+            table_columns(connection, "save_points")?,
+            vec![
+                "project_id".to_string(),
+                "ref_name".to_string(),
+                "commit_oid".to_string(),
+                "base_head_oid".to_string(),
+                "run_id".to_string(),
+                "stage".to_string(),
+                "created_at".to_string(),
+            ]
+        );
 
         let indexes = schema_object_names(connection, "index")?;
         for required_index in [
+            "idx_agent_profiles_name",
             "idx_tasks_project_workflow_updated_at",
             "idx_tasks_project_last_run_updated_at",
             "idx_agent_sessions_project_status_created_at",
             "idx_agent_sessions_task_created_at",
+            "idx_chat_messages_project_conversation_created_at",
+            "idx_save_points_project_created_at",
+            "idx_save_points_project_run",
         ] {
             assert!(
                 indexes.contains(required_index),
@@ -167,8 +217,24 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
             "SET NULL".to_string(),
         )));
 
+        let save_point_foreign_keys = foreign_keys(connection, "save_points")?;
+        assert!(save_point_foreign_keys.contains(&(
+            "project_id".to_string(),
+            "projects".to_string(),
+            "CASCADE".to_string(),
+        )));
+
         let applied_migrations = migration_rows(connection)?;
-        assert_eq!(applied_migrations, vec![(1, "001_init".to_string())]);
+        assert_eq!(
+            applied_migrations,
+            vec![
+                (1, "001_init".to_string()),
+                (2, "002_agent_profiles".to_string()),
+                (3, "003_task_metadata".to_string()),
+                (4, "004_save_points".to_string()),
+                (5, "005_chat_cache".to_string()),
+            ]
+        );
 
         Ok(())
     })?;
@@ -180,8 +246,168 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
         let applied_migrations = migration_rows(connection)?;
         assert_eq!(
             applied_migrations,
-            vec![(1, "001_init".to_string())],
+            vec![
+                (1, "001_init".to_string()),
+                (2, "002_agent_profiles".to_string()),
+                (3, "003_task_metadata".to_string()),
+                (4, "004_save_points".to_string()),
+                (5, "005_chat_cache".to_string()),
+            ],
             "re-initializing the same database should not duplicate migration tracking"
+        );
+
+        Ok(())
+    })?;
+
+    cleanup_database_artifacts(&database_path);
+
+    Ok(())
+}
+
+#[test]
+fn existing_task_rows_receive_metadata_defaults_when_migrated() -> Result<(), Box<dyn Error>> {
+    let temp_root = unique_temp_directory("db-schema-upgrade");
+    let database_path = temp_root.join("dispatch-test.sqlite3");
+    let connection = Connection::open(&database_path)?;
+
+    connection.execute_batch(include_str!("../migrations/001_init.sql"))?;
+    connection.execute_batch(include_str!("../migrations/002_agent_profiles.sql"))?;
+    connection.execute_batch(
+        "
+        CREATE TABLE IF NOT EXISTS dispatch_migrations (
+            version INTEGER PRIMARY KEY,
+            name TEXT NOT NULL UNIQUE,
+            applied_at INTEGER NOT NULL CHECK(applied_at >= 0)
+        );
+        ",
+    )?;
+    connection.execute(
+        "INSERT INTO dispatch_migrations (version, name, applied_at) VALUES (?1, ?2, ?3)",
+        (1_i64, "001_init", 100_i64),
+    )?;
+    connection.execute(
+        "INSERT INTO dispatch_migrations (version, name, applied_at) VALUES (?1, ?2, ?3)",
+        (2_i64, "002_agent_profiles", 200_i64),
+    )?;
+    connection.execute(
+        "
+        INSERT INTO projects (
+            id,
+            name,
+            root_path,
+            created_at,
+            updated_at,
+            last_opened_at
+        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+        ",
+        (
+            "project-legacy",
+            "Legacy Project",
+            "/tmp/dispatch-legacy",
+            300_i64,
+            300_i64,
+            Option::<i64>::None,
+        ),
+    )?;
+    connection.execute(
+        "
+        INSERT INTO tasks (
+            id,
+            project_id,
+            title,
+            description_markdown,
+            workflow_state,
+            last_run_state,
+            last_session_id,
+            assigned_agent_mode,
+            markdown_export_path,
+            blocked_reason,
+            created_at,
+            updated_at,
+            completed_at
+        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
+        ",
+        (
+            "task-legacy",
+            "project-legacy",
+            "Legacy Task",
+            "Legacy body",
+            "planning",
+            "idle",
+            Option::<String>::None,
+            Some("auto".to_string()),
+            Some("dispatch/tasks/legacy.md".to_string()),
+            Some("Waiting on migration".to_string()),
+            400_i64,
+            500_i64,
+            Option::<i64>::None,
+        ),
+    )?;
+    drop(connection);
+
+    let database = Database::initialize_at(&database_path)?;
+
+    database.with_connection(|connection| -> Result<(), Box<dyn Error>> {
+        let migrated_task = connection.query_row(
+            "
+            SELECT
+                priority,
+                labels_json,
+                subtasks_json,
+                review_notes_markdown,
+                assignee,
+                assigned_agent_mode,
+                markdown_export_path,
+                blocked_reason
+            FROM tasks
+            WHERE id = ?1
+            ",
+            ["task-legacy"],
+            |row| {
+                Ok((
+                    row.get::<_, String>(0)?,
+                    row.get::<_, String>(1)?,
+                    row.get::<_, String>(2)?,
+                    row.get::<_, String>(3)?,
+                    row.get::<_, Option<String>>(4)?,
+                    row.get::<_, Option<String>>(5)?,
+                    row.get::<_, Option<String>>(6)?,
+                    row.get::<_, Option<String>>(7)?,
+                ))
+            },
+        )?;
+
+        assert_eq!(migrated_task.0, "none");
+        assert_eq!(migrated_task.1, "[]");
+        assert_eq!(migrated_task.2, "[]");
+        assert_eq!(migrated_task.3, "");
+        assert_eq!(migrated_task.4, None);
+        assert_eq!(migrated_task.5.as_deref(), Some("auto"));
+        assert_eq!(migrated_task.6.as_deref(), Some("dispatch/tasks/legacy.md"));
+        assert_eq!(migrated_task.7.as_deref(), Some("Waiting on migration"));
+
+        assert_eq!(
+            migration_rows(connection)?,
+            vec![
+                (1, "001_init".to_string()),
+                (2, "002_agent_profiles".to_string()),
+                (3, "003_task_metadata".to_string()),
+                (4, "004_save_points".to_string()),
+                (5, "005_chat_cache".to_string()),
+            ]
+        );
+
+        assert_eq!(
+            table_columns(connection, "save_points")?,
+            vec![
+                "project_id".to_string(),
+                "ref_name".to_string(),
+                "commit_oid".to_string(),
+                "base_head_oid".to_string(),
+                "run_id".to_string(),
+                "stage".to_string(),
+                "created_at".to_string(),
+            ]
         );
 
         Ok(())

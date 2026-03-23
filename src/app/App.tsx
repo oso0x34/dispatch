@@ -1,14 +1,32 @@
-import { useEffect, useRef } from "react";
+import {
+  Suspense,
+  lazy,
+  useEffect,
+  useRef,
+} from "react";
 import { X } from "lucide-react";
 
 import { TabHost } from "./TabHost";
 import { useDispatchStore } from "./providers";
 import { ErrorBoundary } from "../shared/components/ErrorBoundary";
-import { SettingsPlaceholder } from "../features/settings/SettingsPlaceholder";
-import { TasksPlaceholder } from "../features/tasks/TasksPlaceholder";
 import { fetchHealth } from "../shared/tauri/health";
+import { CommandPalette } from "../shared/components/CommandPalette";
 import { TopBar } from "../shared/components/TopBar";
-import { TabBar } from "../shared/components/TabBar";
+import { useAppHotkeys } from "../shared/hooks/useAppHotkeys";
+
+
+const SettingsDialog = lazy(async () => {
+  const module = await import("../features/settings/SettingsDialog");
+  return { default: module.SettingsDialog };
+});
+
+function OverlayFallback() {
+  return (
+    <div className="dispatch-text-secondary p-4 text-sm">
+      Loading settings...
+    </div>
+  );
+}
 
 export function App() {
   const activeOverlay = useDispatchStore((state) => state.activeOverlay);
@@ -19,11 +37,13 @@ export function App() {
   const setBootLoading = useDispatchStore((state) => state.setBootLoading);
   const setBootError = useDispatchStore((state) => state.setBootError);
   const setHealth = useDispatchStore((state) => state.setHealth);
+  const setBrowserEnabled = useDispatchStore((state) => state.setBrowserEnabled);
   const hasBootstrapped = useRef(false);
   const overlayRef = useRef<HTMLElement | null>(null);
   const overlayCloseButtonRef = useRef<HTMLButtonElement | null>(null);
   const overlayOpenerRef = useRef<HTMLElement | null>(null);
   const overlayWasOpenRef = useRef(false);
+  useAppHotkeys();
 
   useEffect(() => {
     if (hasBootstrapped.current) {
@@ -42,6 +62,10 @@ export function App() {
         setBootError(message);
       });
   }, [setBootError, setBootLoading, setHealth]);
+
+  useEffect(() => {
+    setBrowserEnabled(true);
+  }, [setBrowserEnabled]);
 
   useEffect(() => {
     if (!activeOverlay) {
@@ -72,7 +96,19 @@ export function App() {
         dialog.querySelectorAll<HTMLElement>(
           'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
         ),
-      ).filter((element) => !element.hasAttribute("disabled"));
+      ).filter((element) => {
+        if (element.hasAttribute("disabled")) {
+          return false;
+        }
+
+        if (element.closest('[aria-hidden="true"]')) {
+          return false;
+        }
+
+        const computedStyle = window.getComputedStyle(element);
+        return computedStyle.display !== "none"
+          && computedStyle.visibility !== "hidden";
+      });
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -120,40 +156,23 @@ export function App() {
     };
   }, [activeOverlay, closeOverlay]);
 
-  const overlayTitle = activeOverlay === "settings" ? "Settings" : "Tasks";
-  const overlayDescription = activeOverlay === "settings"
-    ? "The shell keeps settings ephemeral for now, so the panel mounts only while the gear is open."
-    : "Tasks stay out of the persistent tab host and mount only while this overlay is visible.";
-
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] flex-col px-4 py-4 sm:px-5 sm:py-5">
-        <section className="dispatch-panel flex min-h-[calc(100vh-2rem)] flex-1 flex-col overflow-hidden rounded-[26px]">
-          <div className="p-3 sm:p-4">
-            <TopBar
-              bootStatus={bootStatus}
-              bootError={bootError}
-              health={health}
-            />
+    <div className="flex h-screen flex-col overflow-hidden bg-[var(--app-bg)]">
+      <TopBar />
+
+      <main className="flex-1 overflow-hidden">
+        {bootError ? (
+          <div className="dispatch-alert px-3 py-1.5 text-[0.75rem]">
+            {bootError}
           </div>
+        ) : null}
 
-          <TabBar />
-
-          <main className="flex-1 overflow-auto px-4 py-4 sm:px-5 sm:py-5">
-            {bootError ? (
-              <div className="dispatch-alert mb-4 rounded-xl px-4 py-3 text-sm">
-                {bootError}
-              </div>
-            ) : null}
-
-            <TabHost />
-          </main>
-        </section>
-      </div>
+        <TabHost />
+      </main>
 
       {activeOverlay ? (
         <div
-          className="dispatch-overlay-backdrop fixed inset-0 z-50 px-4 py-4 backdrop-blur-sm sm:px-5 sm:py-5"
+          className="dispatch-overlay-backdrop fixed inset-0 z-50 px-3 py-3 backdrop-blur-sm"
           onClick={closeOverlay}
         >
           <div className="mx-auto flex h-full w-full max-w-[1600px] items-start justify-end">
@@ -161,52 +180,44 @@ export function App() {
               ref={overlayRef}
               role="dialog"
               aria-modal="true"
-              aria-label={overlayTitle}
+              aria-label="Settings"
               tabIndex={-1}
-              className="dispatch-panel flex h-full max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-[24px]"
+              className="dispatch-panel flex h-full max-h-[calc(100vh-1.5rem)] w-full max-w-3xl flex-col overflow-hidden rounded-xl"
               onClick={(event) => event.stopPropagation()}
             >
-              <header className="dispatch-divider flex items-start justify-between gap-4 border-b px-5 py-4 sm:px-6">
-                <div>
-                  <p className="dispatch-kicker text-[0.68rem] font-semibold uppercase tracking-[0.24em]">
-                    Overlay
-                  </p>
-                  <h2 className="dispatch-heading mt-2 text-xl font-semibold tracking-tight">
-                    {overlayTitle}
-                  </h2>
-                  <p className="dispatch-text-secondary mt-2 max-w-xl text-sm leading-6">
-                    {overlayDescription}
-                  </p>
-                </div>
+              <header className="dispatch-divider flex items-center justify-between border-b px-4 py-2.5">
+                <h2 className="dispatch-heading text-sm font-semibold">
+                  Settings
+                </h2>
 
                 <button
                   ref={overlayCloseButtonRef}
                   type="button"
-                  className="dispatch-icon-button flex h-10 w-10 items-center justify-center rounded-xl"
-                  aria-label={`Close ${overlayTitle}`}
+                  className="dispatch-icon-button flex h-7 w-7 items-center justify-center rounded-md"
+                  aria-label="Close settings"
                   onClick={closeOverlay}
                 >
-                  <X size={16} />
+                  <X size={14} />
                 </button>
               </header>
 
-              <div className="min-h-0 flex-1 overflow-auto px-4 py-4 sm:px-5 sm:py-5">
-                <ErrorBoundary surfaceName={`${overlayTitle} overlay`}>
-                  {activeOverlay === "settings" ? (
-                    <SettingsPlaceholder
+              <div className="min-h-0 flex-1 overflow-auto px-4 py-3">
+                <ErrorBoundary surfaceName="Settings overlay">
+                  <Suspense fallback={<OverlayFallback />}>
+                    <SettingsDialog
                       bootStatus={bootStatus}
                       bootError={bootError}
                       health={health}
                     />
-                  ) : (
-                    <TasksPlaceholder />
-                  )}
+                  </Suspense>
                 </ErrorBoundary>
               </div>
             </section>
           </div>
         </div>
       ) : null}
+
+      <CommandPalette />
     </div>
   );
 }

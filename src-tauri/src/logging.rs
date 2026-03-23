@@ -30,6 +30,10 @@ impl LoggingState {
     pub fn log_directory(&self) -> &Path {
         &self.log_directory
     }
+
+    pub fn active_log_path(&self) -> PathBuf {
+        self.log_directory.join(ACTIVE_LOG_NAME)
+    }
 }
 
 pub fn init<R: Runtime>(app_handle: &tauri::AppHandle<R>) -> AppResult<LoggingState> {

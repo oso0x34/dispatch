@@ -1,3 +1,15 @@
+pub mod agent_registry;
+pub mod dispatch;
+pub mod file_watch;
+pub mod history;
+pub mod openclaw;
 pub mod path_guard;
+pub mod project_fs;
 pub mod project_registry;
+pub mod pty_manager;
+pub mod review_router;
 pub mod secrets;
+pub mod session_supervisor;
+pub mod task_export;
+pub mod terminal_ws;
+pub mod tray;

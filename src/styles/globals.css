@@ -2,18 +2,19 @@
 
 :root {
   color-scheme: dark;
-  --font-sans: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+  --font-sans: "Avenir Next", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
-  --app-bg: #09090b;
-  --app-bg-deep: #050507;
-  --app-bg-bottom: #0b0c10;
-  --app-accent-halo-strong: rgba(59, 130, 246, 0.18);
-  --app-accent-halo-soft: rgba(59, 130, 246, 0.08);
-  --surface-elevated: rgba(16, 17, 21, 0.95);
-  --surface-soft: rgba(24, 25, 31, 0.92);
-  --surface-muted: rgba(18, 20, 26, 0.92);
+  --app-bg: #0f1013;
+  --app-bg-deep: #0f1013;
+  --app-bg-bottom: #0f1013;
+  --app-accent-halo-strong: rgba(0, 0, 0, 0);
+  --app-accent-halo-soft: rgba(0, 0, 0, 0);
+  --surface-elevated: #131417;
+  --surface-soft: #17181c;
+  --surface-muted: #15161a;
+  --surface-header: rgba(20, 21, 25, 0.92);
   --surface-border: rgba(255, 255, 255, 0.08);
-  --surface-border-soft: rgba(255, 255, 255, 0.06);
+  --surface-border-soft: rgba(255, 255, 255, 0.07);
   --surface-border-faint: rgba(255, 255, 255, 0.05);
   --surface-control: rgba(255, 255, 255, 0.02);
   --surface-control-hover: rgba(255, 255, 255, 0.04);
@@ -23,7 +24,7 @@
   --surface-project-hover: rgba(255, 255, 255, 0.03);
   --panel-highlight: rgba(255, 255, 255, 0.015);
   --panel-inner-highlight: rgba(255, 255, 255, 0.03);
-  --panel-shadow: rgba(0, 0, 0, 0.28);
+  --panel-shadow: rgba(0, 0, 0, 0.18);
   --text-primary: rgba(236, 240, 247, 0.96);
   --text-strong: rgba(236, 240, 247, 0.78);
   --text-secondary: rgba(236, 240, 247, 0.58);
@@ -54,6 +55,7 @@
   --danger-border-hover: rgba(239, 68, 68, 0.3);
   --danger-text: rgba(254, 226, 226, 0.92);
   --danger-text-strong: rgba(254, 226, 226, 0.94);
+  --accent-error-border-faint: rgba(239, 68, 68, 0.18);
   --status-dot-base: rgba(255, 255, 255, 0.2);
   --status-dot-base-glow: rgba(255, 255, 255, 0.12);
   --overlay-backdrop: rgba(5, 5, 7, 0.72);
@@ -61,6 +63,10 @@
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  font-size: 17px;
 }
 
 html,
@@ -73,9 +79,9 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    radial-gradient(circle at top center, var(--app-accent-halo-strong), transparent 28%),
-    radial-gradient(circle at right 20%, var(--app-accent-halo-soft), transparent 22%),
-    linear-gradient(180deg, var(--app-bg-deep), var(--app-bg) 32%, var(--app-bg-bottom) 100%);
+    radial-gradient(1200px 700px at 20% -10%, rgba(59, 130, 246, 0.08), transparent 52%),
+    radial-gradient(900px 500px at 85% 0%, rgba(255, 255, 255, 0.03), transparent 48%),
+    linear-gradient(180deg, #11131a 0%, #0f1014 28%, #0c0d11 100%);
   color: var(--text-primary);
   font-family: var(--font-sans);
   letter-spacing: -0.01em;
@@ -123,29 +129,11 @@ select {
 }
 
 .dispatch-panel {
-  background:
-    linear-gradient(180deg, var(--panel-highlight), transparent 18%),
-    var(--surface-elevated);
+  background: var(--surface-elevated);
   border: 1px solid var(--surface-border);
   box-shadow:
-    0 20px 45px var(--panel-shadow),
+    0 12px 28px var(--panel-shadow),
     inset 0 1px 0 var(--panel-inner-highlight);
-}
-
-.dispatch-chip {
-  background: var(--surface-soft);
-  border: 1px solid var(--surface-border);
-}
-
-.dispatch-surface {
-  background:
-    linear-gradient(180deg, var(--accent-blue-surface), transparent 42%),
-    var(--surface-muted);
-  border: 1px solid var(--surface-border-soft);
-}
-
-.dispatch-eyebrow {
-  color: var(--accent-blue);
 }
 
 .text-accent-blue {
@@ -160,17 +148,10 @@ select {
   color: var(--accent-error);
 }
 
-.dispatch-kicker {
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
-}
-
 .dispatch-brand-mark {
-  background:
-    linear-gradient(135deg, var(--accent-blue-border-soft), var(--app-accent-halo-soft)),
-    var(--surface-control);
-  border: 1px solid var(--accent-blue-border-soft);
-  color: var(--accent-blue-text);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--surface-border-soft);
+  color: var(--text-secondary);
 }
 
 .dispatch-control,
@@ -178,6 +159,7 @@ select {
   background: var(--surface-control);
   border: 1px solid var(--surface-border-soft);
   color: var(--text-primary);
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, opacity 150ms ease;
 }
 
 .dispatch-control:hover,
@@ -186,11 +168,14 @@ select {
   background: var(--surface-control-hover);
 }
 
+.dispatch-control:active:not(:disabled),
+.dispatch-icon-button:active:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent-blue-border-soft);
+}
+
 .dispatch-input,
-.dispatch-menu,
-.dispatch-empty-state,
-.dispatch-project-row,
-.dispatch-project-badge {
+.dispatch-menu {
   background:
     linear-gradient(180deg, var(--surface-control), transparent 100%),
     var(--surface-soft);
@@ -221,22 +206,37 @@ select {
     var(--surface-button-elevated);
   border: 1px solid var(--accent-blue-border);
   color: var(--accent-blue-text);
+  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
 }
 
 .dispatch-action-button:hover {
   background:
     linear-gradient(135deg, var(--accent-blue-highlight), var(--accent-blue-soft-highlight)),
     var(--surface-button-elevated-hover);
+  border-color: var(--accent-blue-border-strong);
+}
+
+.dispatch-action-button:active:not(:disabled) {
+  background:
+    linear-gradient(135deg, var(--accent-blue-highlight), var(--accent-blue-highlight)),
+    var(--surface-button-elevated-hover);
+  border-color: var(--accent-blue-border-strong);
 }
 
 .dispatch-danger-button {
   background: var(--danger-surface);
   border: 1px solid var(--danger-border);
   color: var(--danger-text);
+  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
 }
 
 .dispatch-danger-button:hover {
   background: var(--danger-surface-hover);
+  border-color: var(--danger-border-hover);
+}
+
+.dispatch-danger-button:active:not(:disabled) {
+  background: rgba(239, 68, 68, 0.18);
   border-color: var(--danger-border-hover);
 }
 
@@ -261,6 +261,7 @@ select {
   color: var(--text-secondary);
   background: transparent;
   border: 1px solid transparent;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
 .dispatch-tab:hover {
@@ -274,6 +275,135 @@ select {
   border-color: var(--accent-blue-border-strong);
   color: var(--text-primary);
   box-shadow: inset 0 0 0 1px var(--accent-blue-glow);
+}
+
+.dispatch-shell-bar {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 30%),
+    var(--surface-header);
+  border-bottom: 1px solid var(--surface-border-soft);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+}
+
+.dispatch-shell-brand {
+  flex: 0 0 auto;
+}
+
+.dispatch-shell-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.2rem;
+  border: 1px solid var(--surface-border-soft);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.018);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.dispatch-shell-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 0.7rem;
+  padding: 0.42rem 0.78rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease,
+    border-color 140ms ease,
+    opacity 140ms ease;
+}
+
+.dispatch-shell-tab:hover {
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text-primary);
+}
+
+.dispatch-shell-tab:focus-visible {
+  outline: 2px solid var(--accent-blue-focus);
+  outline-offset: 1px;
+}
+
+.dispatch-shell-tab[data-active="true"] {
+  background:
+    linear-gradient(180deg, rgba(59, 130, 246, 0.2), rgba(255, 255, 255, 0.04)),
+    rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  border-color: var(--accent-blue-border-strong);
+  box-shadow:
+    0 0 0 1px rgba(59, 130, 246, 0.08),
+    inset 0 -2px 0 var(--accent-blue);
+}
+
+.dispatch-shell-tab:disabled,
+.dispatch-shell-tab[data-disabled="true"] {
+  color: var(--text-subtle);
+  background: rgba(255, 255, 255, 0.014);
+  border-color: rgba(255, 255, 255, 0.03);
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.dispatch-shell-tab:disabled:hover,
+.dispatch-shell-tab[data-disabled="true"]:hover {
+  color: var(--text-subtle);
+  background: rgba(255, 255, 255, 0.014);
+}
+
+.dispatch-shell-tab-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1rem;
+  padding: 0.08rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-subtle);
+  font-size: 0.52rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.dispatch-shell-status {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--status-dot-base);
+  box-shadow: 0 0 12px var(--status-dot-base-glow);
+  flex: 0 0 auto;
+}
+
+.dispatch-shell-status[data-state="ready"] {
+  background: var(--accent-green);
+  box-shadow: 0 0 12px var(--accent-green-glow);
+}
+
+.dispatch-shell-status[data-state="loading"],
+.dispatch-shell-status[data-state="idle"] {
+  background: var(--accent-blue);
+  box-shadow: 0 0 12px var(--accent-blue-loading-glow);
+}
+
+.dispatch-shell-status[data-state="error"] {
+  background: var(--accent-error);
+  box-shadow: 0 0 12px var(--accent-error-glow);
 }
 
 .dispatch-icon-button[data-active="true"] {
@@ -303,8 +433,234 @@ select {
   box-shadow: 0 0 18px var(--accent-error-glow);
 }
 
+.dispatch-button-primary {
+  background:
+    linear-gradient(135deg, var(--accent-blue-soft), var(--app-accent-halo-soft)),
+    var(--surface-button-elevated);
+  border: 1px solid var(--accent-blue-border);
+  color: var(--accent-blue-text);
+  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+
+.dispatch-button-primary:hover {
+  background:
+    linear-gradient(135deg, var(--accent-blue-highlight), var(--accent-blue-soft-highlight)),
+    var(--surface-button-elevated-hover);
+  border-color: var(--accent-blue-border-strong);
+}
+
+.dispatch-button-primary:active:not(:disabled) {
+  background:
+    linear-gradient(135deg, var(--accent-blue-highlight), var(--accent-blue-highlight)),
+    var(--surface-button-elevated-hover);
+  border-color: var(--accent-blue-border-strong);
+}
+
+.dispatch-button-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dispatch-button-primary:focus-visible {
+  outline: 2px solid var(--accent-blue-focus);
+  outline-offset: 2px;
+}
+
 .dispatch-alert {
   background: var(--danger-surface);
   border: 1px solid var(--danger-border-strong);
   color: var(--danger-text-strong);
+}
+
+/* ── Native workspace primitives ── */
+
+.dispatch-rail {
+  background: rgba(10, 13, 19, 0.82);
+  border-right: 1px solid var(--surface-border-soft);
+}
+
+.dispatch-pane {
+  background: var(--app-bg);
+  border: 1px solid var(--surface-border-faint);
+}
+
+.dispatch-toolbar {
+  background: var(--surface-header);
+  border-bottom: 1px solid var(--surface-border-soft);
+  min-height: 2rem;
+  backdrop-filter: blur(6px);
+}
+
+.dispatch-tree-item {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.375rem 0.5rem;
+  min-height: 1.75rem;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.dispatch-tree-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+.dispatch-tree-item:focus-visible {
+  outline: 2px solid var(--accent-blue-focus);
+  outline-offset: -1px;
+}
+
+.dispatch-tree-item[data-active="true"] {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+}
+
+/* ── Surface fill (used by settings panes / cards) ── */
+
+.dispatch-surface {
+  background: var(--surface-elevated);
+  border: 1px solid var(--surface-border-faint);
+}
+
+/* ── Project row hover (used in project list / agent registry list) ── */
+
+.dispatch-project-row {
+  border: 1px solid transparent;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.dispatch-project-row:hover {
+  background: var(--surface-project-hover);
+  border-color: var(--surface-border-faint);
+}
+
+.dispatch-project-row[data-active="true"] {
+  background: var(--accent-blue-soft);
+  border-color: var(--accent-blue-border-faint);
+}
+
+.dispatch-project-switcher-label {
+  display: flex;
+  align-items: center;
+}
+
+.dispatch-project-switcher-button {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+/* ── Browser address-bar progress ── */
+
+@keyframes addressBarProgress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* ── Command palette chip ── */
+
+.dispatch-chip {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 100%),
+    rgba(255, 255, 255, 0.015);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.dispatch-chip:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--surface-border-soft);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.dispatch-chip[data-active="true"] {
+  background:
+    linear-gradient(180deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0.04)),
+    var(--accent-blue-surface);
+  border-color: var(--accent-blue-border-soft);
+  color: var(--text-primary);
+  box-shadow:
+    0 0 0 1px rgba(59, 130, 246, 0.1),
+    0 12px 22px rgba(0, 0, 0, 0.18);
+}
+
+.dispatch-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dispatch-chip:focus-visible {
+  outline: 2px solid var(--accent-blue-focus);
+  outline-offset: 2px;
+}
+
+.dispatch-palette-panel {
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.dispatch-palette-search {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 100%),
+    rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--surface-border-soft);
+}
+
+.dispatch-palette-shortcut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.2rem;
+  padding: 0.08rem 0.42rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border-soft);
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text-subtle);
+  font-size: 0.56rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dispatch-palette-icon {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 100%),
+    rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--surface-border-soft);
+  color: var(--text-secondary);
+}
+
+.dispatch-chip[data-active="true"] .dispatch-palette-icon {
+  background:
+    linear-gradient(180deg, rgba(59, 130, 246, 0.16), rgba(255, 255, 255, 0.04)),
+    rgba(255, 255, 255, 0.025);
+  border-color: var(--accent-blue-border-soft);
+  color: var(--text-primary);
+}
+
+.dispatch-palette-summary {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 100%),
+    rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--surface-border-soft);
 }

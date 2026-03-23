@@ -38,34 +38,29 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   public render() {
     if (this.state.errorMessage) {
-      const surfaceName = this.props.surfaceName ?? "surface";
+      const surfaceName = this.props.surfaceName ?? "This panel";
 
       return (
-        <section className="dispatch-surface rounded-[24px] p-6 sm:p-7">
-          <p className="dispatch-eyebrow text-xs font-semibold uppercase tracking-[0.28em]">
-            Surface Failure
-          </p>
+        <section className="flex h-full items-start justify-center px-4 py-6">
+          <div className="w-full max-w-sm">
+            <h2 className="dispatch-text-primary text-sm font-semibold">
+              {surfaceName} encountered an error
+            </h2>
 
-          <h2 className="mt-4 max-w-3xl text-2xl font-semibold tracking-tight sm:text-[2rem]">
-            {surfaceName} hit a recoverable error.
-          </h2>
+            <p className="dispatch-text-secondary mt-1 text-xs leading-5">
+              The rest of Dispatch is still running normally.
+            </p>
 
-          <p className="mt-4 max-w-2xl text-sm leading-7 sm:text-[0.95rem]">
-            The rest of the Dispatch shell is still running. Retry this surface to remount it
-            without tearing down the full app.
-          </p>
+            <p className="dispatch-text-muted mt-2 rounded-md bg-[var(--surface-soft)] px-3 py-2 font-mono text-[0.7rem] leading-relaxed">
+              {this.state.errorMessage}
+            </p>
 
-          <div className="dispatch-alert mt-5 rounded-2xl px-4 py-3 text-sm">
-            {this.state.errorMessage}
-          </div>
-
-          <div className="mt-5 flex flex-wrap gap-3">
             <button
               type="button"
-              className="dispatch-control rounded-xl px-4 py-2 text-sm font-medium"
+              className="dispatch-control mt-3 rounded-md px-3 py-1.5 text-xs font-medium"
               onClick={this.handleRetry}
             >
-              Retry Surface
+              Retry
             </button>
           </div>
         </section>

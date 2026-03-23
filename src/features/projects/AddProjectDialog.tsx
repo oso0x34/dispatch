@@ -174,7 +174,7 @@ export function AddProjectDialog({
 
   return (
     <div
-      className="dispatch-overlay-backdrop fixed inset-0 z-[60] px-4 py-4 backdrop-blur-sm sm:px-5 sm:py-5"
+      className="dispatch-overlay-backdrop fixed inset-0 z-[60] px-3 py-3 backdrop-blur-sm sm:px-4 sm:py-4"
       onClick={handleRequestClose}
     >
       <div className="mx-auto flex h-full max-w-3xl items-center justify-center">
@@ -186,107 +186,141 @@ export function AddProjectDialog({
           aria-describedby={descriptionId}
           aria-busy={isSubmitting}
           tabIndex={-1}
-          className="dispatch-panel w-full max-w-xl rounded-[24px] px-5 py-5 sm:px-6 sm:py-6"
+          className="dispatch-panel w-full max-w-lg rounded-[1.35rem]"
+          style={{
+            background:
+              "linear-gradient(180deg, color-mix(in srgb, var(--surface-elevated) 92%, transparent) 0%, color-mix(in srgb, var(--surface-base) 98%, transparent) 100%)",
+          }}
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="dispatch-kicker text-[0.68rem] font-semibold uppercase tracking-[0.24em]">
-                Projects
-              </p>
-              <h2
-                id={titleId}
-                className="dispatch-heading mt-2 text-2xl font-semibold tracking-tight"
-              >
-                Add project
-              </h2>
-              <p
-                id={descriptionId}
-                className="dispatch-text-secondary mt-2 text-sm leading-6"
-              >
-                Register an existing workspace directory. Dispatch stores the canonical root in
-                Rust and keeps only the active project ID in settings.
-              </p>
-            </div>
-
-            <button
-              ref={closeButtonRef}
-              type="button"
-              className="dispatch-icon-button flex h-10 w-10 items-center justify-center rounded-xl"
-              aria-label="Close add project dialog"
-              onClick={handleRequestClose}
-              disabled={isSubmitting}
-            >
-              <X size={16} />
-            </button>
-          </div>
-
-          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-            <label
-              className="block"
-              htmlFor={nameInputId}
-            >
-              <span className="dispatch-field-label mb-2 block text-sm font-medium">
-                Project name
-              </span>
-              <input
-                ref={nameInputRef}
-                id={nameInputId}
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                className="dispatch-input w-full rounded-xl px-4 py-3"
-                placeholder="Dispatch Workspace"
-                autoComplete="off"
-                required
-              />
-            </label>
-
-            <label
-              className="block"
-              htmlFor={rootPathInputId}
-            >
-              <span className="dispatch-field-label mb-2 block text-sm font-medium">
-                Root path
-              </span>
-              <input
-                id={rootPathInputId}
-                value={rootPath}
-                onChange={(event) => setRootPath(event.target.value)}
-                className="dispatch-input w-full rounded-xl px-4 py-3"
-                placeholder="/home/oso0x/projects/workspace"
-                autoComplete="off"
-                required
-              />
-            </label>
-
-            {errorMessage ? (
-              <div
-                className="dispatch-alert rounded-xl px-4 py-3 text-sm"
-                role="alert"
-              >
-                {errorMessage}
+          <div className="relative overflow-hidden px-4 pt-4 sm:px-5 sm:pt-5">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-0 h-28 opacity-80"
+              style={{
+                background:
+                  "radial-gradient(circle at top left, color-mix(in srgb, var(--accent-blue) 18%, transparent) 0%, transparent 58%)",
+              }}
+            />
+            <div className="relative flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="dispatch-text-muted text-[0.66rem] font-semibold uppercase tracking-[0.2em]">
+                  Workspace intake
+                </p>
+                <h2
+                  id={titleId}
+                  className="dispatch-heading mt-2 text-lg font-semibold"
+                  style={{ fontFamily: '"Iowan Old Style", "Palatino Linotype", serif' }}
+                >
+                  Add project
+                </h2>
               </div>
-            ) : null}
 
-            <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
               <button
+                ref={closeButtonRef}
                 type="button"
-                className="dispatch-control rounded-xl px-4 py-3 text-sm font-medium"
+                className="dispatch-icon-button flex h-8 w-8 items-center justify-center rounded-xl"
+                aria-label="Close add project dialog"
                 onClick={handleRequestClose}
                 disabled={isSubmitting}
               >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="dispatch-action-button inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium"
-                disabled={isSubmitting}
-              >
-                <FolderPlus size={16} />
-                <span>{isSubmitting ? "Adding project..." : "Add project"}</span>
+                <X size={14} />
               </button>
             </div>
-          </form>
+          </div>
+
+          <div className="px-4 pt-2 sm:px-5">
+            <p
+              id={descriptionId}
+              className="dispatch-text-secondary text-sm leading-6"
+            >
+              Register an existing workspace directory as a project.
+            </p>
+          </div>
+
+          <div className="px-4 pt-4 pb-4 sm:px-5 sm:pb-5">
+            <div className="rounded-2xl border border-[var(--surface-border-soft)] bg-[color:color-mix(in_srgb,var(--surface-base)_74%,transparent)] px-3 py-3 sm:px-4 sm:py-4">
+              <div className="flex flex-wrap gap-2 text-[0.68rem]">
+                <span className="dispatch-text-muted rounded-full border border-[var(--surface-border-soft)] px-2.5 py-1 font-medium uppercase tracking-[0.18em]">
+                  Existing directory
+                </span>
+                <span className="dispatch-text-muted rounded-full border border-[var(--surface-border-soft)] px-2.5 py-1 font-medium uppercase tracking-[0.18em]">
+                  Becomes active on add
+                </span>
+              </div>
+
+              <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
+                <label
+                  className="block"
+                  htmlFor={nameInputId}
+                >
+                  <span className="dispatch-field-label mb-1.5 block text-xs font-medium">
+                    Project name
+                  </span>
+                  <input
+                    ref={nameInputRef}
+                    id={nameInputId}
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    className="dispatch-input w-full rounded-xl px-3 py-2.5 text-sm"
+                    placeholder="My Workspace"
+                    autoComplete="off"
+                    required
+                  />
+                </label>
+
+                <label
+                  className="block"
+                  htmlFor={rootPathInputId}
+                >
+                  <span className="dispatch-field-label mb-1.5 block text-xs font-medium">
+                    Root path
+                  </span>
+                  <input
+                    id={rootPathInputId}
+                    value={rootPath}
+                    onChange={(event) => setRootPath(event.target.value)}
+                    className="dispatch-input w-full rounded-xl px-3 py-2.5 text-sm"
+                    placeholder="/home/user/projects/workspace"
+                    autoComplete="off"
+                    required
+                  />
+                </label>
+
+                <p className="dispatch-text-tertiary text-xs leading-5">
+                  Use a stable folder path so Dispatch can keep launches, browsing, and project scope aligned.
+                </p>
+
+                {errorMessage ? (
+                  <p
+                    className="text-accent-error text-xs"
+                    role="alert"
+                  >
+                    {errorMessage}
+                  </p>
+                ) : null}
+
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    className="dispatch-control rounded-xl px-3 py-1.5 text-xs font-medium"
+                    onClick={handleRequestClose}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="dispatch-action-button inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-medium"
+                    disabled={isSubmitting || !name.trim() || !rootPath.trim()}
+                  >
+                    <FolderPlus size={13} />
+                    <span>{isSubmitting ? "Adding..." : "Add project"}</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </section>
       </div>
     </div>

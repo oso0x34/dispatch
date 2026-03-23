@@ -24,9 +24,10 @@ import {
   useDispatchStore,
 } from "../providers";
 
-type HeavyTabId = "agents" | "files" | "history" | "chat";
+type HeavyTabId = "tasks" | "agents" | "files" | "history" | "chat";
 
 const mountCounts = vi.hoisted<Record<HeavyTabId, number>>(() => ({
+  tasks: 0,
   agents: 0,
   files: 0,
   history: 0,
@@ -52,20 +53,24 @@ function createHeavyTabMock(tab: HeavyTabId) {
   };
 }
 
-vi.mock("../../features/agents/AgentsPlaceholder", () => ({
-  AgentsPlaceholder: createHeavyTabMock("agents"),
+vi.mock("../../features/agents/AgentsTab", () => ({
+  AgentsTab: createHeavyTabMock("agents"),
 }));
 
-vi.mock("../../features/files/FilesPlaceholder", () => ({
-  FilesPlaceholder: createHeavyTabMock("files"),
+vi.mock("../../features/tasks/TasksTab", () => ({
+  TasksTab: createHeavyTabMock("tasks"),
 }));
 
-vi.mock("../../features/history/HistoryPlaceholder", () => ({
-  HistoryPlaceholder: createHeavyTabMock("history"),
+vi.mock("../../features/files/FilesTab", () => ({
+  FilesTab: createHeavyTabMock("files"),
 }));
 
-vi.mock("../../features/chat/ChatPlaceholder", () => ({
-  ChatPlaceholder: createHeavyTabMock("chat"),
+vi.mock("../../features/history/HistoryTab", () => ({
+  HistoryTab: createHeavyTabMock("history"),
+}));
+
+vi.mock("../../features/chat/ChatTab", () => ({
+  ChatTab: createHeavyTabMock("chat"),
 }));
 
 afterEach(() => {
@@ -81,8 +86,8 @@ function TabHostHarness() {
 
   return (
     <>
-      <button type="button" onClick={() => setActiveTab("projects")}>
-        Open Projects
+      <button type="button" onClick={() => setActiveTab("tasks")}>
+        Open Tasks
       </button>
       <button type="button" onClick={() => setActiveTab("agents")}>
         Open Agents
@@ -118,28 +123,35 @@ function getTabPanel(tab: HeavyTabId) {
 }
 
 describe("TabHost", () => {
-  it("lazy-mounts each heavy tab only after first activation", async () => {
+  it("mounts the default orchestrate surface and lazy-mounts the remaining tabs on first activation", async () => {
     const { user } = renderTabHost();
 
-    for (const tab of Object.keys(mountCounts) as HeavyTabId[]) {
+    expect(await screen.findByTestId("chat-surface")).toBeTruthy();
+    expect(mountCounts.chat).toBe(1);
+
+    for (const tab of ["tasks", "agents", "files", "history"] as HeavyTabId[]) {
       expect(screen.queryByTestId(`${tab}-surface`)).toBeNull();
       expect(mountCounts[tab]).toBe(0);
     }
 
+    await user.click(screen.getByRole("button", { name: "Open Tasks" }));
+    expect(await screen.findByTestId("tasks-surface")).toBeTruthy();
+    expect(mountCounts.tasks).toBe(1);
+
     await user.click(screen.getByRole("button", { name: "Open Agents" }));
-    expect(screen.getByTestId("agents-surface")).toBeTruthy();
+    expect(await screen.findByTestId("agents-surface")).toBeTruthy();
     expect(mountCounts.agents).toBe(1);
 
     await user.click(screen.getByRole("button", { name: "Open Files" }));
-    expect(screen.getByTestId("files-surface")).toBeTruthy();
+    expect(await screen.findByTestId("files-surface")).toBeTruthy();
     expect(mountCounts.files).toBe(1);
 
     await user.click(screen.getByRole("button", { name: "Open History" }));
-    expect(screen.getByTestId("history-surface")).toBeTruthy();
+    expect(await screen.findByTestId("history-surface")).toBeTruthy();
     expect(mountCounts.history).toBe(1);
 
     await user.click(screen.getByRole("button", { name: "Open Chat" }));
-    expect(screen.getByTestId("chat-surface")).toBeTruthy();
+    expect(await screen.findByTestId("chat-surface")).toBeTruthy();
     expect(mountCounts.chat).toBe(1);
   });
 
@@ -148,14 +160,14 @@ describe("TabHost", () => {
 
     await user.click(screen.getByRole("button", { name: "Open Agents" }));
 
-    const agentsSurface = screen.getByTestId("agents-surface");
+    const agentsSurface = await screen.findByTestId("agents-surface");
     const firstInstanceId = agentsSurface.getAttribute("data-instance-id");
 
     expect(firstInstanceId).toBe("agents-1");
     expect(mountCounts.agents).toBe(1);
-    expect(getTabPanel("agents")?.style.display).toBe("block");
+    expect(getTabPanel("agents")?.style.display).toBe("flex");
 
-    await user.click(screen.getByRole("button", { name: "Open Projects" }));
+    await user.click(screen.getByRole("button", { name: "Open Chat" }));
 
     expect(screen.getByTestId("agents-surface")).toBeTruthy();
     expect(getTabPanel("agents")?.style.display).toBe("none");
@@ -164,7 +176,7 @@ describe("TabHost", () => {
     await user.click(screen.getByRole("button", { name: "Open Agents" }));
 
     expect(screen.getByTestId("agents-surface").getAttribute("data-instance-id")).toBe(firstInstanceId);
-    expect(getTabPanel("agents")?.style.display).toBe("block");
+    expect(getTabPanel("agents")?.style.display).toBe("flex");
     expect(mountCounts.agents).toBe(1);
   });
 });

@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use rusqlite::{params, OptionalExtension};
@@ -151,14 +152,17 @@ fn secret_command_error_message(error: AppError) -> String {
 }
 
 #[tauri::command]
-pub fn get_setting(database: State<'_, Database>, key: String) -> CommandResult<Option<Setting>> {
+pub fn get_setting(
+    database: State<'_, Arc<Database>>,
+    key: String,
+) -> CommandResult<Option<Setting>> {
     validate_public_setting_key_command(&key)?;
     get_setting_with_db(database.inner(), key).map_err(settings_command_error_message)
 }
 
 #[tauri::command]
 pub fn set_setting(
-    database: State<'_, Database>,
+    database: State<'_, Arc<Database>>,
     key: String,
     value: Value,
 ) -> CommandResult<Setting> {
@@ -167,7 +171,7 @@ pub fn set_setting(
 }
 
 #[tauri::command]
-pub fn list_settings(database: State<'_, Database>) -> CommandResult<Vec<Setting>> {
+pub fn list_settings(database: State<'_, Arc<Database>>) -> CommandResult<Vec<Setting>> {
     list_settings_with_db(database.inner()).map_err(settings_command_error_message)
 }
 

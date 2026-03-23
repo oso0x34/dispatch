@@ -1,92 +1,99 @@
 import {
   Activity,
-  AlertTriangle,
+  Command,
   Settings2,
-  ShieldCheck,
 } from "lucide-react";
 
-import type { HealthResponse } from "../tauri/health";
 import { useDispatchStore } from "../../app/providers";
 import { ProjectSwitcher } from "../../features/projects/ProjectSwitcher";
-import type { BootStatus } from "../../store/uiSlice";
+import { tabDefinitions } from "../../store/uiSlice";
+import { appHotkeys } from "../hooks/useAppHotkeys";
 
-type TopBarProps = {
-  bootStatus: BootStatus;
-  bootError: string | null;
-  health: HealthResponse | null;
-};
-
-export function TopBar({ bootStatus, bootError, health }: TopBarProps) {
+export function TopBar() {
   const activeOverlay = useDispatchStore((state) => state.activeOverlay);
+  const activeTab = useDispatchStore((state) => state.activeTab);
+  const browserEnabled = useDispatchStore((state) => state.browserEnabled);
+  const commandPaletteOpen = useDispatchStore((state) => state.commandPaletteOpen);
+  const setActiveTab = useDispatchStore((state) => state.setActiveTab);
   const toggleOverlay = useDispatchStore((state) => state.toggleOverlay);
-  const statusLabel = bootStatus === "ready"
-    ? "Rust runtime ready"
-    : bootStatus === "error"
-      ? "Tauri bridge unavailable"
-      : "Starting Rust runtime";
-  const statusDetail = bootError
-    ? bootError
-    : health
-      ? `${health.appName} ${health.appVersion}`
-      : "Waiting for health response";
+  const toggleCommandPalette = useDispatchStore((state) => state.toggleCommandPalette);
 
   return (
-    <header className="dispatch-panel rounded-[22px] px-4 py-4 sm:px-5">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-          <div className="flex items-center gap-3">
-            <div className="dispatch-brand-mark flex h-11 w-11 items-center justify-center rounded-xl">
-              <Activity size={18} />
-            </div>
-
-            <div className="min-w-0">
-              <p className="dispatch-kicker text-[0.7rem] font-semibold uppercase tracking-[0.24em]">
-                Dispatch
-              </p>
-              <h1 className="dispatch-heading mt-1 text-lg font-semibold tracking-tight sm:text-[1.15rem]">
-                Desktop command center
-              </h1>
-            </div>
+    <header className="dispatch-shell-bar">
+      <div className="flex min-h-[46px] items-center gap-4 px-3 py-2">
+        <div className="dispatch-shell-brand flex min-w-0 items-center gap-2.5 pr-1">
+          <div className="dispatch-brand-mark flex h-[18px] w-[18px] items-center justify-center rounded-md">
+            <Activity size={11} />
           </div>
-
-          <ProjectSwitcher />
+          <div className="min-w-0 leading-none">
+            <p className="dispatch-text-primary truncate text-[0.58rem] font-semibold uppercase tracking-[0.26em]">
+              Dispatch
+            </p>
+            <p className="dispatch-text-subtle truncate text-[0.56rem] uppercase tracking-[0.18em]">
+              Workspace
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="dispatch-chip inline-flex items-center gap-3 rounded-xl px-4 py-3 text-sm">
-            <span
-              className="dispatch-status-dot h-2.5 w-2.5 rounded-full"
-              data-state={bootStatus}
-            />
+        <ProjectSwitcher />
 
-            <div className="flex min-w-0 flex-col">
-              <span className="dispatch-text-primary truncate font-medium">{statusLabel}</span>
-              <span className="dispatch-text-muted truncate text-xs">{statusDetail}</span>
-            </div>
+        <nav
+          className="dispatch-shell-tabs min-w-0 flex-1"
+          aria-label="Primary navigation"
+        >
+          {tabDefinitions.map((tab) => {
+            const isBrowserTab = tab.id === "browser";
+            const isDisabled = isBrowserTab && !browserEnabled;
 
-            {bootStatus === "ready" ? (
-              <ShieldCheck
-                size={16}
-                className="text-accent-green"
-              />
-            ) : bootStatus === "error" ? (
-              <AlertTriangle
-                size={16}
-                className="text-accent-error"
-              />
-            ) : null}
-          </div>
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                className="dispatch-shell-tab"
+                data-active={activeTab === tab.id}
+                data-disabled={isDisabled ? "true" : undefined}
+                disabled={isDisabled}
+                title={isDisabled ? "Browser preview unavailable in this runtime" : tab.label}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                }}
+              >
+                <span className="truncate">{tab.label}</span>
+
+                {isDisabled ? (
+                  <span className="dispatch-shell-tab-pill">
+                    Preview
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            className="dispatch-icon-button flex h-[26px] w-[26px] items-center justify-center rounded-md"
+            data-active={commandPaletteOpen}
+            aria-label="Open command palette"
+            aria-expanded={commandPaletteOpen}
+            aria-haspopup="dialog"
+            title={`Command palette (${appHotkeys.commandPaletteShortcut})`}
+            onClick={toggleCommandPalette}
+          >
+            <Command size={13} />
+          </button>
 
           <button
             type="button"
-            className="dispatch-icon-button flex h-11 w-11 items-center justify-center rounded-xl"
+            className="dispatch-icon-button flex h-[26px] w-[26px] items-center justify-center rounded-md"
             data-active={activeOverlay === "settings"}
             aria-label="Open settings"
             aria-expanded={activeOverlay === "settings"}
             aria-haspopup="dialog"
             onClick={() => toggleOverlay("settings")}
           >
-            <Settings2 size={16} />
+            <Settings2 size={13} />
           </button>
         </div>
       </div>

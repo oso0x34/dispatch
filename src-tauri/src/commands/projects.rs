@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 use tauri::State;
 
@@ -83,7 +85,7 @@ fn project_command_error_message(error: AppError) -> String {
 
 #[tauri::command]
 pub fn create_project(
-    database: State<'_, Database>,
+    database: State<'_, Arc<Database>>,
     name: String,
     root_path: String,
 ) -> CommandResult<ProjectPayload> {
@@ -91,19 +93,22 @@ pub fn create_project(
 }
 
 #[tauri::command]
-pub fn list_projects(database: State<'_, Database>) -> CommandResult<Vec<ProjectPayload>> {
+pub fn list_projects(database: State<'_, Arc<Database>>) -> CommandResult<Vec<ProjectPayload>> {
     list_projects_with_db(database.inner()).map_err(project_command_error_message)
 }
 
 #[tauri::command]
 pub fn get_project(
-    database: State<'_, Database>,
+    database: State<'_, Arc<Database>>,
     project_id: String,
 ) -> CommandResult<Option<ProjectPayload>> {
     get_project_with_db(database.inner(), project_id).map_err(project_command_error_message)
 }
 
 #[tauri::command]
-pub fn delete_project(database: State<'_, Database>, project_id: String) -> CommandResult<bool> {
+pub fn delete_project(
+    database: State<'_, Arc<Database>>,
+    project_id: String,
+) -> CommandResult<bool> {
     delete_project_with_db(database.inner(), project_id).map_err(project_command_error_message)
 }

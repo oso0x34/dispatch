@@ -27,5 +27,37 @@ export default defineConfig(() => ({
     target: process.env.TAURI_ENV_PLATFORM === "windows" ? "chrome105" : "safari13",
     minify: process.env.TAURI_DEBUG ? false : "esbuild",
     sourcemap: Boolean(process.env.TAURI_DEBUG),
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("@xterm/addon-webgl")) {
+            return "xterm-webgl";
+          }
+
+          if (
+            id.includes("@xterm/addon-fit")
+            || id.includes("@xterm/addon-search")
+            || id.includes("@xterm/addon-web-links")
+          ) {
+            return "xterm-addons";
+          }
+
+          if (id.includes("@xterm/xterm")) {
+            return "xterm-core";
+          }
+
+          if (
+            id.includes("react-markdown")
+            || id.includes("remark-gfm")
+            || id.includes("rehype-highlight")
+            || id.includes("highlight.js")
+          ) {
+            return "markdown";
+          }
+
+          return undefined;
+        },
+      },
+    },
   },
 }));

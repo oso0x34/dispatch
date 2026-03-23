@@ -1,3 +1,12 @@
+pub mod agent_profiles;
+pub mod dispatch;
+pub mod files;
 pub mod health;
+pub mod history;
+pub mod notifications;
+pub mod openclaw;
 pub mod projects;
 pub mod settings;
+pub mod tasks;
+pub mod terminal;
+pub mod window;

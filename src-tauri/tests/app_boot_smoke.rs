@@ -37,6 +37,7 @@ fn app_boots_with_managed_app_state() {
 fn health_command_returns_boot_health_payload() {
     let app = build_app();
     let booted_at_unix = app.state::<AppState>().booted_at_unix();
+    let runtime_debug = app.state::<AppState>().runtime_debug_snapshot();
     let webview = WebviewWindowBuilder::new(&app, "main", Default::default())
         .build()
         .expect("failed to build Dispatch smoke webview");
@@ -65,4 +66,32 @@ fn health_command_returns_boot_health_payload() {
     assert_eq!(payload["appName"], "Dispatch");
     assert_eq!(payload["appVersion"], env!("CARGO_PKG_VERSION"));
     assert_eq!(payload["bootedAtUnix"], booted_at_unix);
+    assert_eq!(
+        payload["logDirectory"],
+        serde_json::Value::from(
+            runtime_debug
+                .log_directory
+                .map(|path| path.display().to_string()),
+        )
+    );
+    assert_eq!(
+        payload["activeLogPath"],
+        serde_json::Value::from(
+            runtime_debug
+                .active_log_path
+                .map(|path| path.display().to_string()),
+        )
+    );
+    assert_eq!(
+        payload["sessionLogsDirectory"],
+        serde_json::Value::from(
+            runtime_debug
+                .session_logs_directory
+                .map(|path| path.display().to_string()),
+        )
+    );
+    assert_eq!(
+        payload["staleSessionsAbandonedAtBoot"],
+        serde_json::Value::from(runtime_debug.stale_sessions_abandoned_at_boot as u64)
+    );
 }

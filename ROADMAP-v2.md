@@ -9,6 +9,12 @@ origin: ROADMAP-REVIEW.md + ROADMAP.md + PRD.md + research/*
 
 # Dispatch — Build Roadmap v2
 
+## Visual Design Authority
+
+- `docs/visual-rebuild-spec.md` plus `docs/reference/visual-rebuild/*` are the authority for shell and visual design decisions.
+- `ROADMAP-v2.md` remains the authority for architecture, ownership, release scope, and verification, but it does not define the final product shell.
+- `old-v.png` and `old-v-2.png` are historical only and must not be used as implementation targets.
+
 ## Changes from v1
 
 - The roadmap now starts with an explicit architecture lock. v1 jumped straight into scaffold work while key ownership questions were still unresolved; that would have caused rework in PTY, filesystem, and settings.
@@ -905,7 +911,7 @@ bash scripts/smoke/phase-7-openclaw.sh
 
 **Files**
 
-- `src-tauri/migrations/004_chat_cache.sql`
+- `src-tauri/migrations/005_chat_cache.sql`
 - `src-tauri/src/services/openclaw/chat.rs`
 - `src-tauri/src/services/review_router.rs`
 - `src/features/chat/ChatTab.tsx`

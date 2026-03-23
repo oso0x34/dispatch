@@ -9,7 +9,6 @@ import {
   Check,
   ChevronsUpDown,
   FolderPlus,
-  FolderTree,
   Trash2,
 } from "lucide-react";
 
@@ -103,13 +102,8 @@ export function ProjectSwitcher() {
   const title = activeProject
     ? activeProject.name
     : isLoading
-      ? "Loading projects"
+      ? "Loading..."
       : "No project selected";
-  const detail = activeProject
-    ? `${projects.length} registered ${projects.length === 1 ? "project" : "projects"}`
-    : projectStatus === "error"
-      ? "Project registry unavailable"
-      : "Register a project to enable scoped Dispatch work";
 
   const openAddDialog = () => {
     clearProjectError();
@@ -123,10 +117,16 @@ export function ProjectSwitcher() {
         ref={switcherRef}
         className="relative"
       >
+        <div className="dispatch-project-switcher-label px-0.5 pb-1">
+          <span className="dispatch-text-subtle text-[0.54rem] font-semibold uppercase tracking-[0.24em]">
+            Project
+          </span>
+        </div>
+
         <button
           ref={triggerRef}
           type="button"
-          className="dispatch-control flex min-w-[16rem] items-center justify-between gap-3 rounded-xl px-4 py-3 text-left transition"
+          className="dispatch-control dispatch-project-switcher-button flex h-[30px] min-w-[8.5rem] max-w-[11.5rem] items-center justify-between gap-2 rounded-lg px-2.5 text-left transition"
           aria-expanded={menuOpen}
           aria-haspopup="dialog"
           aria-label="Project switcher"
@@ -145,24 +145,13 @@ export function ProjectSwitcher() {
             setMenuOpen(true);
           }}
         >
-          <div className="flex min-w-0 items-center gap-3">
-            <FolderTree
-              size={16}
-              className="text-accent-blue"
-            />
-
-            <div className="min-w-0">
-              <p className="dispatch-kicker text-[0.66rem] font-semibold uppercase tracking-[0.24em]">
-                Project
-              </p>
-              <p className="dispatch-text-primary truncate text-sm font-medium">{title}</p>
-              <p className="dispatch-text-tertiary truncate text-xs">{detail}</p>
-            </div>
-          </div>
+          <span className="dispatch-text-primary min-w-0 truncate text-[0.78rem] font-medium">
+            {title}
+          </span>
 
           <ChevronsUpDown
-            size={14}
-            className="dispatch-text-tertiary shrink-0"
+            size={11}
+            className="dispatch-text-subtle shrink-0"
           />
         </button>
 
@@ -174,32 +163,32 @@ export function ProjectSwitcher() {
             aria-modal="false"
             aria-label="Project options"
             tabIndex={-1}
-            className="dispatch-menu absolute left-0 top-[calc(100%+0.75rem)] z-40 w-[min(30rem,calc(100vw-2rem))] rounded-[20px] p-3 shadow-2xl"
+            className="dispatch-menu absolute left-0 top-[calc(100%+0.5rem)] z-40 w-[min(23rem,calc(100vw-2rem))] rounded-xl p-2.5 shadow-2xl"
           >
-            <div className="dispatch-divider flex items-start justify-between gap-3 border-b px-2 pb-3">
-              <div>
-                <p className="dispatch-kicker text-[0.65rem] font-semibold uppercase tracking-[0.24em]">
-                  Workspace registry
-                </p>
-                <p className="dispatch-text-secondary mt-2 text-sm leading-6">
-                  Project roots stay in Rust. The shell stores only the active project ID.
-                </p>
+            <div className="flex items-start justify-between gap-3 px-1 pb-2.5">
+              <div className="min-w-0">
+                <span className="dispatch-text-secondary block text-[0.64rem] font-semibold uppercase tracking-[0.22em]">
+                  Projects
+                </span>
+                <span className="dispatch-text-subtle mt-0.5 block text-[0.68rem]">
+                  Switch workspace context
+                </span>
               </div>
 
               <button
                 type="button"
                 data-popup-autofocus={projects.length === 0 ? "true" : undefined}
-                className="dispatch-action-button inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium"
+                className="dispatch-action-button inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[0.7rem] font-medium"
                 onClick={openAddDialog}
               >
-                <FolderPlus size={15} />
+                <FolderPlus size={12} />
                 <span>Add project</span>
               </button>
             </div>
 
             {projectError ? (
               <div
-                className="dispatch-alert mt-3 rounded-xl px-4 py-3 text-sm"
+                className="dispatch-alert mb-2 rounded-md px-3 py-2 text-[0.75rem]"
                 role="alert"
               >
                 {projectError}
@@ -207,18 +196,13 @@ export function ProjectSwitcher() {
             ) : null}
 
             {projects.length === 0 ? (
-              <div className="px-2 py-5">
-                <div className="dispatch-empty-state rounded-[18px] px-4 py-5">
-                  <p className="dispatch-text-primary text-sm font-medium">
-                    No projects registered yet.
-                  </p>
-                  <p className="dispatch-text-secondary mt-2 text-sm leading-6">
-                    Add a project root to make the rest of Dispatch project-aware.
-                  </p>
-                </div>
+              <div className="px-1 py-3">
+                <p className="dispatch-text-muted text-center text-[0.75rem]">
+                  No projects registered yet.
+                </p>
               </div>
             ) : (
-              <div className="mt-3 flex max-h-80 flex-col gap-2 overflow-auto px-1">
+              <div className="flex max-h-64 flex-col gap-0.5 overflow-auto">
                 {projects.map((project) => {
                   const isActive = project.id === activeProjectId;
                   const isPending = pendingProjectId === project.id;
@@ -229,11 +213,12 @@ export function ProjectSwitcher() {
                   return (
                     <div
                       key={project.id}
-                      className="dispatch-project-row flex items-center gap-2 rounded-[18px] px-2 py-2"
+                      className="dispatch-project-row flex items-center gap-1 rounded-md px-0.5"
+                      data-active={isActive ? "true" : undefined}
                     >
                       <button
                         type="button"
-                        className="dispatch-project-option flex min-w-0 flex-1 items-center gap-3 rounded-[14px] px-3 py-3 text-left transition"
+                        className="dispatch-tree-item flex min-w-0 flex-1 items-center gap-2 text-left"
                         aria-label={buttonLabel}
                         data-project-option="true"
                         data-active={isActive ? "true" : "false"}
@@ -243,32 +228,32 @@ export function ProjectSwitcher() {
                           void selectProject(project.id);
                         }}
                       >
-                        <div className="dispatch-project-badge flex h-10 w-10 items-center justify-center rounded-xl">
-                          {isActive ? <Check size={16} /> : <FolderTree size={16} />}
-                        </div>
+                        {isActive ? (
+                          <Check size={12} className="shrink-0 text-accent-blue" />
+                        ) : (
+                          <span className="inline-block w-3" />
+                        )}
 
-                        <div className="min-w-0 flex-1">
-                          <p className="dispatch-text-primary truncate text-sm font-medium">
-                            {project.name}
-                          </p>
-                          <p className="dispatch-text-muted truncate text-xs">
-                            {isPending && projectAction === "switching"
-                              ? "Switching active workspace..."
-                              : isActive
-                                ? "Active project"
-                                : "Project root managed by Rust"}
-                          </p>
-                        </div>
+                        <span className="min-w-0 truncate text-[0.76rem]">
+                          {isPending && projectAction === "switching"
+                            ? `${project.name} (switching...)`
+                            : project.name}
+                        </span>
                       </button>
 
                       <button
                         type="button"
-                        className="dispatch-danger-button flex h-11 w-11 items-center justify-center rounded-xl"
+                        className="dispatch-icon-button flex h-6 w-6 items-center justify-center rounded-md opacity-0 transition hover:opacity-100"
+                        style={{ opacity: undefined }}
                         aria-label={`Remove ${project.name}`}
                         disabled={isMutating}
                         onClick={() => void removeProject(project.id)}
+                        onFocus={(e) => { e.currentTarget.style.opacity = "1"; }}
+                        onBlur={(e) => { e.currentTarget.style.opacity = ""; }}
+                        onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.opacity = ""; }}
                       >
-                        <Trash2 size={15} />
+                        <Trash2 size={11} />
                       </button>
                     </div>
                   );

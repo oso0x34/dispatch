@@ -2,6 +2,7 @@ use std::{
     error::Error,
     fs,
     path::{Path, PathBuf},
+    sync::Arc,
     time::{SystemTime, UNIX_EPOCH},
 };
 
@@ -50,7 +51,7 @@ fn project_commands_only_expose_project_scoped_paths_over_ipc() -> Result<(), Bo
 
     let database = Database::initialize_at(&database_path)?;
     let app = configure_app(mock_builder())
-        .manage(database)
+        .manage(Arc::new(database))
         .build(tauri::generate_context!())
         .expect("failed to build Dispatch projects command test app");
     let webview = WebviewWindowBuilder::new(&app, "main", Default::default())

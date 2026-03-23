@@ -1,15 +1,13 @@
 import {
+  Suspense,
+  lazy,
   useEffect,
   useState,
   type ReactNode,
 } from "react";
+import { LoaderCircle } from "lucide-react";
 
 import { ErrorBoundary } from "../shared/components/ErrorBoundary";
-import { AgentsPlaceholder } from "../features/agents/AgentsPlaceholder";
-import { ChatPlaceholder } from "../features/chat/ChatPlaceholder";
-import { FilesPlaceholder } from "../features/files/FilesPlaceholder";
-import { HistoryPlaceholder } from "../features/history/HistoryPlaceholder";
-import { ProjectsPlaceholder } from "../features/projects/ProjectsPlaceholder";
 import { useDispatchStore } from "./providers";
 import {
   lazyPanelTabs,
@@ -18,40 +16,92 @@ import {
 
 type LazyPanelTabId = (typeof lazyPanelTabs)[number];
 
-const tabPanels: Record<PanelTabId, { label: string; content: ReactNode }> = {
-  projects: {
-    label: "Projects tab",
-    content: <ProjectsPlaceholder />,
+const AgentsTab = lazy(async () => {
+  const module = await import("../features/agents/AgentsTab");
+  return { default: module.AgentsTab };
+});
+
+const TasksTab = lazy(async () => {
+  const module = await import("../features/tasks/TasksTab");
+  return { default: module.TasksTab };
+});
+
+const ChatTab = lazy(async () => {
+  const module = await import("../features/chat/ChatTab");
+  return { default: module.ChatTab };
+});
+
+const BrowserTab = lazy(async () => {
+  const module = await import("../features/browser/BrowserTab");
+  return { default: module.BrowserTab };
+});
+
+const FilesTab = lazy(async () => {
+  const module = await import("../features/files/FilesTab");
+  return { default: module.FilesTab };
+});
+
+const HistoryTab = lazy(async () => {
+  const module = await import("../features/history/HistoryTab");
+  return { default: module.HistoryTab };
+});
+
+function LazyPanelFallback() {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <LoaderCircle size={18} className="dispatch-text-muted animate-spin" />
+    </div>
+  );
+}
+
+const tabPanels: Record<PanelTabId, { label: string; render: (active: boolean) => ReactNode }> = {
+  tasks: {
+    label: "Tasks tab",
+    render: () => null,
   },
   agents: {
     label: "Agents tab",
-    content: <AgentsPlaceholder />,
+    render: (active) => <AgentsTab active={active} />,
   },
   files: {
     label: "Files tab",
-    content: <FilesPlaceholder />,
+    render: (active) => <FilesTab active={active} />,
   },
   history: {
     label: "History tab",
-    content: <HistoryPlaceholder />,
+    render: () => <HistoryTab />,
   },
   chat: {
     label: "Chat tab",
-    content: <ChatPlaceholder />,
+    render: (active) => <ChatTab active={active} />,
+  },
+  browser: {
+    label: "Browser tab",
+    render: () => <BrowserTab />,
   },
 };
 
 function isLazyPanelTab(tab: PanelTabId): tab is LazyPanelTabId {
-  return tab === "agents" || tab === "files" || tab === "history" || tab === "chat";
+  return tab === "tasks"
+    || tab === "agents"
+    || tab === "files"
+    || tab === "history"
+    || tab === "chat"
+    || tab === "browser";
 }
 
 export function TabHost() {
   const activeTab = useDispatchStore((state) => state.activeTab);
+  const browserEnabled = useDispatchStore((state) => state.browserEnabled);
+  const linkedTaskId = useDispatchStore((state) => state.overlayTaskId);
+  const setActiveTab = useDispatchStore((state) => state.setActiveTab);
   const [mountedPanels, setMountedPanels] = useState<Record<LazyPanelTabId, boolean>>(() => ({
+    tasks: activeTab === "tasks",
     agents: activeTab === "agents",
     files: activeTab === "files",
     history: activeTab === "history",
     chat: activeTab === "chat",
+    browser: activeTab === "browser",
   }));
 
   useEffect(() => {
@@ -71,27 +121,35 @@ export function TabHost() {
     });
   }, [activeTab]);
 
-  return (
-    <div className="flex min-h-full flex-col">
-      {activeTab === "projects" ? (
-        <div data-tab-panel="projects">
-          <ErrorBoundary surfaceName={tabPanels.projects.label}>
-            {tabPanels.projects.content}
-          </ErrorBoundary>
-        </div>
-      ) : null}
+  useEffect(() => {
+    if (activeTab === "browser" && !browserEnabled) {
+      setActiveTab("chat");
+    }
+  }, [
+    activeTab,
+    browserEnabled,
+    setActiveTab,
+  ]);
 
+  return (
+    <div className="flex h-full flex-col">
       {lazyPanelTabs.map((tab) => (
         mountedPanels[tab] ? (
           <div
             key={tab}
             data-tab-panel={tab}
+            className="h-full"
             style={{
-              display: activeTab === tab ? "block" : "none",
+              display: activeTab === tab ? "flex" : "none",
+              flexDirection: "column",
             }}
           >
             <ErrorBoundary surfaceName={tabPanels[tab].label}>
-              {tabPanels[tab].content}
+              <Suspense fallback={<LazyPanelFallback />}>
+                {tab === "tasks"
+                  ? <TasksTab linkedTaskId={linkedTaskId} />
+                  : tabPanels[tab].render(activeTab === tab)}
+              </Suspense>
             </ErrorBoundary>
           </div>
         ) : null
