@@ -1176,3 +1176,23 @@
   - `src/features/browser/store/browserSlice.ts`
   - `src/features/browser/__tests__/BrowserTab.test.tsx`
   - `scripts/smoke/phase-11-browser.sh`
+
+### DISPATCH-049 — Skills Dropdown on Task Cards
+- **Phase**: Post-v1
+- **Description**: Add a skills multi-select dropdown to the task detail drawer so users can tag tasks with agent skills (e.g. `test-writer`, `review`, `brainstorm`) that get injected into the dispatch prompt. Lightweight approach: `skills_json TEXT DEFAULT '[]'` column on `tasks`, multi-select UI in TaskDetailDrawer, and interpolation in the dispatch service prompt template.
+- **Acceptance Criteria**:
+  - Tasks have an optional `skills` field stored as JSON array of skill name strings.
+  - TaskDetailDrawer shows a multi-select dropdown for choosing skills.
+  - KanbanCard displays selected skills as compact badges.
+  - Dispatch service includes selected skills in the prompt sent to the agent.
+  - Migration adds `skills_json` column to `tasks` table.
+- **Dependencies**: None (post-v1, builds on existing task + dispatch infrastructure)
+- **Estimated Hours**: 6
+- **Priority**: P3
+- **Key Files**:
+  - `src-tauri/migrations/004_task_skills.sql`
+  - `src-tauri/src/models/task.rs`
+  - `src/shared/lib/tauri.ts`
+  - `src/features/tasks/TaskDetailDrawer.tsx`
+  - `src/features/tasks/KanbanCard.tsx`
+  - `src-tauri/src/services/dispatch.rs`

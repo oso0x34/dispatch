@@ -20,16 +20,16 @@ export function TopBar() {
 
   return (
     <header className="dispatch-shell-bar">
-      <div className="flex min-h-[46px] items-center gap-4 px-3 py-2">
+      <div className="flex min-h-[50px] items-center gap-4 px-3 py-2.5">
         <div className="dispatch-shell-brand flex min-w-0 items-center gap-2.5 pr-1">
           <div className="dispatch-brand-mark flex h-[18px] w-[18px] items-center justify-center rounded-md">
             <Activity size={11} />
           </div>
-          <div className="min-w-0 leading-none">
-            <p className="dispatch-text-primary truncate text-[0.58rem] font-semibold uppercase tracking-[0.26em]">
+          <div className="dispatch-shell-brand-copy min-w-0">
+            <p className="dispatch-text-primary truncate text-[0.58rem] font-semibold uppercase tracking-[0.24em] leading-[1.08]">
               Dispatch
             </p>
-            <p className="dispatch-text-subtle truncate text-[0.56rem] uppercase tracking-[0.18em]">
+            <p className="dispatch-text-subtle truncate text-[0.56rem] uppercase tracking-[0.16em] leading-[1.12]">
               Workspace
             </p>
           </div>

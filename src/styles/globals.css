@@ -291,6 +291,16 @@ select {
 
 .dispatch-shell-brand {
   flex: 0 0 auto;
+  min-height: 1.75rem;
+  padding-block: 1px;
+}
+
+.dispatch-shell-brand-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.06rem;
+  padding-block: 1px;
 }
 
 .dispatch-shell-tabs {
