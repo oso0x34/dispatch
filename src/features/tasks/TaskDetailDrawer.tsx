@@ -331,6 +331,7 @@ export function TaskDetailDrawer({
   const reviewSummary = parseLatestAutomatedReviewSummary(draft?.reviewNotesMarkdown ?? "");
   const labelCount = draft ? parseLabels(draft.labelsText).length : 0;
   const subtaskCount = draft?.subtasks.length ?? 0;
+  const isWorklogPanel = activePanel === "worklog";
 
   if (!task || !draft) {
     return (
@@ -364,6 +365,26 @@ export function TaskDetailDrawer({
       </section>
     );
   }
+
+  const inspectorStats = [
+    {
+      label: "Last run",
+      value: formatRunState(task.lastRunState),
+    },
+    {
+      label: "Linked session",
+      value: task.lastSessionId ?? "None",
+      truncate: true,
+    },
+    {
+      label: "Workflow",
+      value: formatWorkflowState(draft.workflowState),
+    },
+    {
+      label: "Dirty state",
+      value: isDirty ? "Unsaved edits" : "Saved",
+    },
+  ];
 
   const handleCancel = () => {
     setDraft(buildDraft(task));
@@ -434,7 +455,7 @@ export function TaskDetailDrawer({
     <section className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3">
         <div className="space-y-2.5">
-          <section className="rounded-[1.1rem] border border-[rgba(96,165,250,0.18)] bg-[linear-gradient(180deg,rgba(59,130,246,0.1),rgba(255,255,255,0.02))] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+          <section className={`rounded-[1.1rem] border border-[rgba(96,165,250,0.18)] bg-[linear-gradient(180deg,rgba(59,130,246,0.1),rgba(255,255,255,0.02))] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] ${isWorklogPanel ? "px-3 py-2.5" : "px-3 py-3"}`}>
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="dispatch-text-muted text-[0.6rem] font-semibold uppercase tracking-[0.22em]">
@@ -444,7 +465,9 @@ export function TaskDetailDrawer({
                   {draft.title.trim() || task.title}
                 </h3>
                 <p className="dispatch-text-secondary mt-1 text-[0.7rem] leading-5">
-                  Keep routing, scope, and review context visible without leaving the board.
+                  {isWorklogPanel
+                    ? "Keep the brief and checklist in view while you edit."
+                    : "Keep routing, scope, and review context visible without leaving the board."}
                 </p>
               </div>
               <div className="flex flex-wrap items-center justify-end gap-1.5 text-[0.6rem]">
@@ -457,36 +480,41 @@ export function TaskDetailDrawer({
               </div>
             </div>
 
-            <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-[0.9rem] border border-[var(--surface-border-soft)] bg-[rgba(0,0,0,0.16)] px-3 py-2">
-                <SectionHeader>Last run</SectionHeader>
-                <p className="dispatch-text-primary mt-1 text-xs font-medium">
-                  {formatRunState(task.lastRunState)}
-                </p>
+            {isWorklogPanel ? (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {inspectorStats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="inline-flex min-w-0 items-center gap-1.5 rounded-full border border-[var(--surface-border-soft)] bg-[rgba(0,0,0,0.16)] px-2.5 py-1.5"
+                  >
+                    <span className="dispatch-text-subtle text-[0.54rem] font-semibold uppercase tracking-[0.18em]">
+                      {stat.label}
+                    </span>
+                    <span className={`dispatch-text-primary text-[0.68rem] font-medium ${stat.truncate ? "inline-block max-w-[12rem] truncate align-bottom" : ""}`}>
+                      {stat.value}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div className="rounded-[0.9rem] border border-[var(--surface-border-soft)] bg-[rgba(0,0,0,0.16)] px-3 py-2">
-                <SectionHeader>Linked session</SectionHeader>
-                <p className="dispatch-text-primary mt-1 truncate text-xs font-medium">
-                  {task.lastSessionId ?? "None"}
-                </p>
+            ) : (
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                {inspectorStats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-[0.9rem] border border-[var(--surface-border-soft)] bg-[rgba(0,0,0,0.16)] px-3 py-2"
+                  >
+                    <SectionHeader>{stat.label}</SectionHeader>
+                    <p className={`dispatch-text-primary mt-1 text-xs font-medium ${stat.truncate ? "truncate" : ""}`}>
+                      {stat.value}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <div className="rounded-[0.9rem] border border-[var(--surface-border-soft)] bg-[rgba(0,0,0,0.16)] px-3 py-2">
-                <SectionHeader>Workflow</SectionHeader>
-                <p className="dispatch-text-primary mt-1 text-xs font-medium">
-                  {formatWorkflowState(draft.workflowState)}
-                </p>
-              </div>
-              <div className="rounded-[0.9rem] border border-[var(--surface-border-soft)] bg-[rgba(0,0,0,0.16)] px-3 py-2">
-                <SectionHeader>Dirty state</SectionHeader>
-                <p className="dispatch-text-primary mt-1 text-xs font-medium">
-                  {isDirty ? "Unsaved edits" : "Saved"}
-                </p>
-              </div>
-            </div>
+            )}
           </section>
 
-          <section className="rounded-[1.05rem] border border-[var(--surface-border-soft)] bg-[rgba(255,255,255,0.025)] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-            <div className="flex flex-wrap items-center gap-2">
+          <section className={`rounded-[1.05rem] border border-[var(--surface-border-soft)] bg-[rgba(255,255,255,0.025)] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] ${isWorklogPanel ? "px-3 py-2.5" : "px-3 py-3"}`}>
+            <div className={`flex flex-wrap gap-2 ${isWorklogPanel ? "items-center justify-between" : "items-center"}`}>
               {[
                 {
                   id: "overview" as const,
@@ -527,14 +555,20 @@ export function TaskDetailDrawer({
                   </button>
                 );
               })}
+
+              {isWorklogPanel ? (
+                <p className="dispatch-text-muted text-[0.68rem] leading-5 sm:text-right">
+                  Description and checklist stay in view with less chrome above them.
+                </p>
+              ) : null}
             </div>
-            <p className="dispatch-text-muted mt-2 text-[0.68rem] leading-5">
-              {activePanel === "overview"
-                ? "Routing, ownership, and saved task metadata stay together."
-                : activePanel === "worklog"
-                  ? "Work context is split into description and checklist sections."
+            {isWorklogPanel ? null : (
+              <p className="dispatch-text-muted mt-2 text-[0.68rem] leading-5">
+                {activePanel === "overview"
+                  ? "Routing, ownership, and saved task metadata stay together."
                   : "Review state, notes, and automation controls stay in one place."}
-            </p>
+              </p>
+            )}
           </section>
 
           {activePanel === "overview" ? (
@@ -741,7 +775,7 @@ export function TaskDetailDrawer({
           ) : null}
 
           {activePanel === "worklog" ? (
-            <>
+            <div className="grid gap-3 2xl:grid-cols-[minmax(0,1.15fr)_minmax(17rem,0.85fr)]">
               <InspectorCard
                 title="Task brief"
                 description="Keep the problem statement or implementation notes close to the board."
@@ -756,8 +790,8 @@ export function TaskDetailDrawer({
                         descriptionMarkdown: event.target.value,
                       } : currentDraft);
                     }}
-                    rows={6}
-                    className="dispatch-input mt-1 w-full rounded-[0.85rem] px-3 py-2 text-xs leading-5"
+                    rows={10}
+                    className="dispatch-input mt-1 min-h-[16rem] w-full resize-y rounded-[0.85rem] px-3 py-2 text-xs leading-5"
                     placeholder="Markdown description for the task."
                     aria-label="Description"
                   />
@@ -852,7 +886,7 @@ export function TaskDetailDrawer({
                   </div>
                 </div>
               </InspectorCard>
-            </>
+            </div>
           ) : null}
 
           {activePanel === "review" ? (

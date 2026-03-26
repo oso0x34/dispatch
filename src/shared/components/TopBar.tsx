@@ -26,10 +26,10 @@ export function TopBar() {
             <Activity size={11} />
           </div>
           <div className="dispatch-shell-brand-copy min-w-0">
-            <p className="dispatch-text-primary truncate text-[0.58rem] font-semibold uppercase tracking-[0.24em] leading-[1.08]">
+            <p className="dispatch-text-primary text-[0.58rem] font-semibold uppercase tracking-[0.24em] leading-[1.18]">
               Dispatch
             </p>
-            <p className="dispatch-text-subtle truncate text-[0.56rem] uppercase tracking-[0.16em] leading-[1.12]">
+            <p className="dispatch-text-subtle text-[0.56rem] uppercase tracking-[0.16em] leading-[1.16]">
               Workspace
             </p>
           </div>

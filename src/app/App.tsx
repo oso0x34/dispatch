@@ -194,7 +194,7 @@ export function App() {
                   ref={overlayCloseButtonRef}
                   type="button"
                   className="dispatch-icon-button flex h-7 w-7 items-center justify-center rounded-md"
-                  aria-label="Close settings"
+                  aria-label="Close Settings"
                   onClick={closeOverlay}
                 >
                   <X size={14} />
