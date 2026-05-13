@@ -21,6 +21,13 @@ use tauri::{
 use tokio::{net::TcpListener, time::sleep};
 use tokio_tungstenite::{accept_async, tungstenite::protocol::Message};
 
+type ChatIpcHarness = (
+    tauri::App<tauri::test::MockRuntime>,
+    tauri::WebviewWindow<tauri::test::MockRuntime>,
+    Arc<Database>,
+    PathBuf,
+);
+
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn openclaw_chat_snapshot_replays_history_after_reconnect_without_duplicate_rows(
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -874,17 +881,7 @@ fn gateway_url(address: SocketAddr) -> String {
     format!("ws://{address}")
 }
 
-fn build_chat_ipc_harness(
-    label: &str,
-) -> Result<
-    (
-        tauri::App<tauri::test::MockRuntime>,
-        tauri::WebviewWindow<tauri::test::MockRuntime>,
-        Arc<Database>,
-        PathBuf,
-    ),
-    Box<dyn Error + Send + Sync>,
-> {
+fn build_chat_ipc_harness(label: &str) -> Result<ChatIpcHarness, Box<dyn Error + Send + Sync>> {
     let temp_root = unique_temp_directory(label);
     let database_path = temp_root.join("dispatch-test.sqlite3");
     let database = Arc::new(Database::initialize_at(&database_path)?);

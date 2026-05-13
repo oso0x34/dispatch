@@ -124,7 +124,7 @@ describe("DispatchModal", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("enables VICAM dispatch only when OpenClaw is connected and Auto stays selected", async () => {
+  it("enables OpenClaw dispatch only when OpenClaw is connected and Auto stays selected", async () => {
     invokeMock.mockResolvedValue(registryEntries);
 
     const { user, onDispatch } = renderDispatchModal({
@@ -132,17 +132,17 @@ describe("DispatchModal", () => {
     });
 
     await screen.findByLabelText("Agent");
-    const vicamButton = screen.getByRole("button", { name: "Dispatch via VICAM orchestration" });
-    expect(vicamButton.hasAttribute("disabled")).toBe(false);
+    const openClawButton = screen.getByRole("button", { name: "Dispatch via OpenClaw orchestration" });
+    expect(openClawButton.hasAttribute("disabled")).toBe(false);
 
     await user.type(screen.getByLabelText("Prompt (optional)"), "Route through OpenClaw.");
-    await user.click(vicamButton);
+    await user.click(openClawButton);
 
     await waitFor(() => {
       expect(onDispatch).toHaveBeenCalledWith({
         profileId: "auto",
         prompt: "Route through OpenClaw.",
-        route: "vicam",
+        route: "openclaw",
       });
     });
   });

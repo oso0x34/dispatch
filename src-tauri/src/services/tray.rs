@@ -100,7 +100,7 @@ impl TrayService {
             .on_tray_icon_event(|tray, event| {
                 if matches!(event, TrayIconEvent::Click { .. }) {
                     let app = tray.app_handle();
-                    if let Err(error) = reveal_main_window(&app) {
+                    if let Err(error) = reveal_main_window(app) {
                         tracing::error!(error = %error, "tray click could not reveal the main window");
                     }
                 }

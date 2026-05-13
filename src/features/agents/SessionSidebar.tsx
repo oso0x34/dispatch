@@ -10,10 +10,12 @@ import {
   formatAgentSessionStatus,
   type AgentSessionRecord,
 } from "./store/agentsSlice";
+import type { OpenClawConnectionStatusRecord } from "../../shared/lib/tauri";
 
 type SessionSidebarProps = {
   sessions: AgentSessionRecord[];
   selectedSessionId: string | null;
+  openClawStatus: OpenClawConnectionStatusRecord | null;
   isReady: boolean;
   isCreating: boolean;
   onSelectSession: (sessionId: string) => void;
@@ -32,9 +34,22 @@ function getStatusState(status: AgentSessionRecord["status"]) {
   return "idle";
 }
 
+function formatOpenClawStatus(status: OpenClawConnectionStatusRecord | null) {
+  if (!status || status.state === "disconnected") {
+    return "Standalone mode";
+  }
+
+  if (status.state === "connected") {
+    return "OpenClaw connected";
+  }
+
+  return `OpenClaw ${status.state.replaceAll("_", " ")}`;
+}
+
 export function SessionSidebar({
   sessions,
   selectedSessionId,
+  openClawStatus,
   isReady,
   isCreating,
   onSelectSession,
@@ -51,6 +66,9 @@ export function SessionSidebar({
           </span>
           <p className="dispatch-text-subtle mt-0.5 text-[0.6rem] leading-4">
             {runningCount} live · {sessions.length} total
+          </p>
+          <p className="dispatch-text-subtle mt-0.5 text-[0.6rem] leading-4">
+            {formatOpenClawStatus(openClawStatus)}
           </p>
         </div>
 
@@ -79,45 +97,49 @@ export function SessionSidebar({
           <div role="list" className="flex flex-col gap-1">
             {sessions.map((session) => {
               const isSelected = session.id === selectedSessionId;
+              const sourceLabel = session.kind === "openclaw" ? "OpenClaw" : "Local";
 
               return (
-                <button
-                  key={session.id}
-                  type="button"
-                  role="listitem"
-                  aria-pressed={isSelected}
-                  aria-label={describeAgentSession(session)}
-                  className="group flex w-full flex-col items-start gap-1 rounded-xl border px-2.5 py-2 text-left transition-[background-color,border-color,box-shadow,transform] duration-150 hover:-translate-y-px hover:border-[rgba(88,163,255,0.18)] hover:bg-[rgba(255,255,255,0.03)]"
-                  style={{
-                    borderColor: isSelected ? "rgba(88, 163, 255, 0.28)" : "rgba(255, 255, 255, 0.04)",
-                    background: isSelected ? "rgba(59, 130, 246, 0.12)" : "rgba(255, 255, 255, 0.015)",
-                    boxShadow: isSelected ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 24px rgba(0,0,0,0.18)" : "none",
-                  }}
-                  data-active={isSelected}
-                  onClick={() => onSelectSession(session.id)}
-                >
-                  <div className="flex min-w-0 items-center gap-1.5">
-                    <span
-                      className="dispatch-shell-status inline-block h-1.5 w-1.5 shrink-0"
-                      data-state={getStatusState(session.status)}
-                    />
-                    <span className="min-w-0 truncate text-[0.72rem] font-medium text-[var(--text-primary)]">
-                      {describeAgentSession(session)}
-                    </span>
-                  </div>
+                <div key={session.id} role="listitem">
+                  <button
+                    type="button"
+                    aria-pressed={isSelected}
+                    aria-label={describeAgentSession(session)}
+                    className="group flex w-full flex-col items-start gap-1 rounded-xl border px-2.5 py-2 text-left transition-[background-color,border-color,box-shadow,transform] duration-150 hover:-translate-y-px hover:border-[rgba(88,163,255,0.18)] hover:bg-[rgba(255,255,255,0.03)]"
+                    style={{
+                      borderColor: isSelected ? "rgba(88, 163, 255, 0.28)" : "rgba(255, 255, 255, 0.04)",
+                      background: isSelected ? "rgba(59, 130, 246, 0.12)" : "rgba(255, 255, 255, 0.015)",
+                      boxShadow: isSelected ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 24px rgba(0,0,0,0.18)" : "none",
+                    }}
+                    data-active={isSelected}
+                    onClick={() => onSelectSession(session.id)}
+                  >
+                    <div className="flex min-w-0 items-center gap-1.5">
+                      <span
+                        className="dispatch-shell-status inline-block h-1.5 w-1.5 shrink-0"
+                        data-state={getStatusState(session.status)}
+                      />
+                      <span className="min-w-0 truncate text-[0.72rem] font-medium text-[var(--text-primary)]">
+                        {describeAgentSession(session)}
+                      </span>
+                    </div>
 
-                  <div className="flex min-w-0 flex-wrap items-center gap-1 text-[0.6rem] leading-4">
-                    <span className="rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] px-1.5 py-0.5 text-[var(--text-subtle)]">
-                      {formatAgentSessionStatus(session.status)}
-                    </span>
-                    <span className="dispatch-text-subtle min-w-0 truncate">
-                      {describeAgentSessionMeta(session)}
-                    </span>
-                    <span className="dispatch-text-subtle shrink-0">
-                      {formatAgentSessionElapsed(session)}
-                    </span>
-                  </div>
-                </button>
+                    <div className="flex min-w-0 flex-wrap items-center gap-1 text-[0.6rem] leading-4">
+                      <span className="rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] px-1.5 py-0.5 text-[var(--text-subtle)]">
+                        {sourceLabel}
+                      </span>
+                      <span className="rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] px-1.5 py-0.5 text-[var(--text-subtle)]">
+                        {formatAgentSessionStatus(session.status)}
+                      </span>
+                      <span className="dispatch-text-subtle min-w-0 truncate">
+                        {describeAgentSessionMeta(session)}
+                      </span>
+                      <span className="dispatch-text-subtle shrink-0">
+                        {formatAgentSessionElapsed(session)}
+                      </span>
+                    </div>
+                  </button>
+                </div>
               );
             })}
           </div>

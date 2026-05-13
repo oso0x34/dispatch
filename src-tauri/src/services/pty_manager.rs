@@ -31,7 +31,7 @@ use super::{
 const DEFAULT_PTY_ROWS: u16 = 24;
 const DEFAULT_PTY_COLS: u16 = 80;
 #[cfg(unix)]
-const DISPATCH_BASH_INIT_FILE_NAME: &str = "dispatch-embedded-bash-init.sh";
+const DISPATCH_BASH_INIT_FILE_PREFIX: &str = "dispatch-embedded-bash-init";
 const SESSION_SOURCE_TERMINAL: &str = "terminal";
 const SESSION_KIND_SHELL: &str = "shell";
 const SESSION_STATUS_RUNNING: &str = "running";
@@ -41,6 +41,8 @@ const TERMINATION_GRACE_PERIOD: Duration = Duration::from_millis(750);
 const TERMINATION_POLL_INTERVAL: Duration = Duration::from_millis(50);
 
 static TERMINAL_SESSION_ID_COUNTER: AtomicU64 = AtomicU64::new(1);
+#[cfg(unix)]
+static BASH_INIT_FILE_COUNTER: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Debug, Clone)]
 pub(crate) enum TerminalOutputEvent {
@@ -617,12 +619,18 @@ fn resolve_shell_args(program: &str) -> AppResult<Vec<String>> {
 }
 
 fn shell_program_name(program: &str) -> Option<&str> {
-    Path::new(program).file_name().and_then(|name| name.to_str())
+    Path::new(program)
+        .file_name()
+        .and_then(|name| name.to_str())
 }
 
 #[cfg(unix)]
 fn ensure_dispatch_bash_init_file() -> AppResult<PathBuf> {
-    let init_file_path = std::env::temp_dir().join(DISPATCH_BASH_INIT_FILE_NAME);
+    let init_file_id = BASH_INIT_FILE_COUNTER.fetch_add(1, Ordering::Relaxed);
+    let init_file_path = std::env::temp_dir().join(format!(
+        "{DISPATCH_BASH_INIT_FILE_PREFIX}-{}-{init_file_id}.sh",
+        std::process::id(),
+    ));
 
     fs::write(&init_file_path, dispatch_bash_init_contents()).map_err(|error| {
         AppError::new(format!(

@@ -387,9 +387,8 @@ async fn wait_for_socket_close(
             return Ok(());
         };
 
-        match message? {
-            tungstenite::Message::Close(_) => return Ok(()),
-            _ => {}
+        if let tungstenite::Message::Close(_) = message? {
+            return Ok(());
         }
     }
 }

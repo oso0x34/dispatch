@@ -314,11 +314,12 @@ fn normalize_label(value: Option<&str>, fallback: &str) -> String {
             continue;
         }
 
-        if normalized.is_ascii_whitespace() || matches!(normalized, '-' | '_' | '.' | '/' | ':') {
-            if !slug.is_empty() && !previous_was_dash {
-                slug.push('-');
-                previous_was_dash = true;
-            }
+        if (normalized.is_ascii_whitespace() || matches!(normalized, '-' | '_' | '.' | '/' | ':'))
+            && !slug.is_empty()
+            && !previous_was_dash
+        {
+            slug.push('-');
+            previous_was_dash = true;
         }
     }
 

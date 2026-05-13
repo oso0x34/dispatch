@@ -52,7 +52,7 @@ vi.mock("../../agents/DispatchModal", () => ({
     onDispatch: (input: {
       profileId: string;
       prompt: string | null;
-      route: "local" | "vicam";
+      route: "local" | "openclaw";
     }) => Promise<void>;
   }) => {
     if (!open) {

@@ -58,7 +58,7 @@ export type AgentsSlice = {
     taskId?: string | null;
     prompt?: string | null;
   }) => Promise<TerminalSessionRecord>;
-  dispatchViaVicam: (input: {
+  dispatchViaOpenClaw: (input: {
     taskId?: string | null;
     prompt: string;
   }) => Promise<OpenClawDispatchSessionResultRecord>;
@@ -486,11 +486,11 @@ export const createAgentsSlice: StateCreator<
       });
     }
   },
-  dispatchViaVicam: async (input) => {
+  dispatchViaOpenClaw: async (input) => {
     const projectId = get().workspaceProjectId;
 
     if (!projectId) {
-      const message = "Select a project before dispatching via VICAM.";
+      const message = "Select a project before dispatching via OpenClaw.";
       set({
         workspaceError: message,
       });
@@ -523,7 +523,7 @@ export const createAgentsSlice: StateCreator<
 
       return result;
     } catch (error: unknown) {
-      const message = getErrorMessage(error, "VICAM dispatch failed.");
+      const message = getErrorMessage(error, "OpenClaw dispatch failed.");
 
       set({
         workspaceError: message,

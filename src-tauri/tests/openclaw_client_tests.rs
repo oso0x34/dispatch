@@ -32,6 +32,13 @@ use tauri::{
 use tokio::{net::TcpListener, time::sleep};
 use tokio_tungstenite::{accept_async, tungstenite::protocol::Message};
 
+type OpenClawIpcHarness = (
+    tauri::App<tauri::test::MockRuntime>,
+    tauri::WebviewWindow<tauri::test::MockRuntime>,
+    Arc<Database>,
+    PathBuf,
+);
+
 #[test]
 fn openclaw_status_command_is_registered_on_the_tauri_invoke_surface(
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -1305,15 +1312,7 @@ fn gateway_url(address: SocketAddr) -> String {
 
 fn build_openclaw_ipc_harness(
     label: &str,
-) -> Result<
-    (
-        tauri::App<tauri::test::MockRuntime>,
-        tauri::WebviewWindow<tauri::test::MockRuntime>,
-        Arc<Database>,
-        PathBuf,
-    ),
-    Box<dyn Error + Send + Sync>,
-> {
+) -> Result<OpenClawIpcHarness, Box<dyn Error + Send + Sync>> {
     let temp_root = unique_temp_directory(label);
     let database_path = temp_root.join("dispatch-test.sqlite3");
     let database = Arc::new(Database::initialize_at(&database_path)?);

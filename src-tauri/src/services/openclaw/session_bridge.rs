@@ -231,9 +231,7 @@ fn normalize_timestamp_value(value: &Value) -> Option<i64> {
 }
 
 fn normalize_timestamp_number(raw: i64) -> i64 {
-    if raw >= 1_000_000_000_000 {
-        raw / 1_000
-    } else if raw <= -1_000_000_000_000 {
+    if raw >= 1_000_000_000_000 || raw <= -1_000_000_000_000 {
         raw / 1_000
     } else {
         raw

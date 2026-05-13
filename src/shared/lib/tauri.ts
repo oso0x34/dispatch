@@ -542,7 +542,7 @@ const previewFiles: PreviewProjectFileSource[] = [
   {
     preview: {
       path: "README.md",
-      absolutePath: "/home/oso0x/projects/dispatch/README.md",
+      absolutePath: "/workspace/dispatch/README.md",
       name: "README.md",
       format: "markdown",
       content: [
@@ -564,7 +564,7 @@ const previewFiles: PreviewProjectFileSource[] = [
   {
     preview: {
       path: "src/app/App.tsx",
-      absolutePath: "/home/oso0x/projects/dispatch/src/app/App.tsx",
+      absolutePath: "/workspace/dispatch/src/app/App.tsx",
       name: "App.tsx",
       format: "text",
       content: [
@@ -582,7 +582,7 @@ const previewFiles: PreviewProjectFileSource[] = [
   {
     preview: {
       path: "src/features/agents/TerminalPanel.tsx",
-      absolutePath: "/home/oso0x/projects/dispatch/src/features/agents/TerminalPanel.tsx",
+      absolutePath: "/workspace/dispatch/src/features/agents/TerminalPanel.tsx",
       name: "TerminalPanel.tsx",
       format: "text",
       content: [
@@ -604,7 +604,7 @@ const previewFiles: PreviewProjectFileSource[] = [
   {
     preview: {
       path: "src/features/files/FilesTab.tsx",
-      absolutePath: "/home/oso0x/projects/dispatch/src/features/files/FilesTab.tsx",
+      absolutePath: "/workspace/dispatch/src/features/files/FilesTab.tsx",
       name: "FilesTab.tsx",
       format: "text",
       content: [
@@ -884,7 +884,7 @@ let previewTerminalOutputBySessionId = new Map<string, string>([
   [
     "session-shell",
     [
-      "dispatch ~/projects/dispatch",
+      "dispatch /workspace/dispatch",
       "$ codex work --surface agents --goal \"match the new shell refs\"",
       "",
       "Inspecting current shell surfaces...",
@@ -901,7 +901,7 @@ let previewTerminalOutputBySessionId = new Map<string, string>([
   [
     "session-notes",
     [
-      "notes ~/projects/dispatch",
+      "notes /workspace/dispatch",
       "$ git status --short",
       " M src/app/App.tsx",
       " M src/app/TabHost.tsx",
@@ -1466,7 +1466,7 @@ function handlePreviewInvoke<TResult>(
       previewTerminalOutputBySessionId.set(
         session.id,
         [
-          `${session.program} ~/projects/dispatch`,
+          `${session.program} /workspace/dispatch`,
           "$ echo \"Browser preview session\"",
           "Browser preview session",
         ].join("\n"),
@@ -1502,7 +1502,7 @@ function handlePreviewInvoke<TResult>(
       previewTerminalOutputBySessionId.set(
         session.id,
         [
-          `${session.program} ~/projects/dispatch`,
+          `${session.program} /workspace/dispatch`,
           input.prompt
             ? `$ ${session.program} "${input.prompt}"`
             : `$ ${session.program}`,

@@ -2,6 +2,16 @@
   "name": "dispatch",
   "private": true,
   "version": "0.1.0",
+  "description": "Tauri desktop command center for AI-assisted development work.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oso0x34/dispatch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oso0x34/dispatch/issues"
+  },
+  "homepage": "https://github.com/oso0x34/dispatch#readme",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -43,7 +53,7 @@
     "jsdom": "^29.0.0",
     "tailwindcss": "4.2.2",
     "typescript": "5.9.3",
-    "vite": "8.0.1",
+    "vite": "8.0.12",
     "vitest": "4.1.0"
   }
 }

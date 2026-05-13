@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     db::Database,
     error::{AppError, AppResult},
-    models::{AgentArg, AgentCwd, AgentEnvValue, AgentProfile},
+    models::{AgentArg, AgentCwd, AgentEnvValue, AgentProfile, AgentProfileStorage},
 };
 
 use super::secrets;
@@ -65,9 +65,16 @@ pub fn list_agent_profiles(database: &Database) -> AppResult<Vec<AgentProfile>> 
         rows.into_iter()
             .map(
                 |(id, name, program, args_json, env_json, cwd_json, created_at, updated_at)| {
-                    AgentProfile::from_storage(
-                        id, name, program, args_json, env_json, cwd_json, created_at, updated_at,
-                    )
+                    AgentProfile::from_storage(AgentProfileStorage {
+                        id,
+                        name,
+                        program,
+                        args_json,
+                        env_json,
+                        cwd_json,
+                        created_at,
+                        updated_at,
+                    })
                 },
             )
             .collect()
@@ -123,9 +130,16 @@ pub fn get_agent_profile(database: &Database, profile_id: &str) -> AppResult<Opt
 
         row.map(
             |(id, name, program, args_json, env_json, cwd_json, created_at, updated_at)| {
-                AgentProfile::from_storage(
-                    id, name, program, args_json, env_json, cwd_json, created_at, updated_at,
-                )
+                AgentProfile::from_storage(AgentProfileStorage {
+                    id,
+                    name,
+                    program,
+                    args_json,
+                    env_json,
+                    cwd_json,
+                    created_at,
+                    updated_at,
+                })
             },
         )
         .transpose()

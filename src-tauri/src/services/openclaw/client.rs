@@ -158,22 +158,12 @@ enum DriverCommand {
     Disconnect,
 }
 
+#[derive(Default)]
 struct ClientLifecycle {
     desired_config: Option<OpenClawConnectConfig>,
     control_tx: Option<mpsc::UnboundedSender<DriverCommand>>,
     driver_task: Option<JoinHandle<()>>,
     generation: u64,
-}
-
-impl Default for ClientLifecycle {
-    fn default() -> Self {
-        Self {
-            desired_config: None,
-            control_tx: None,
-            driver_task: None,
-            generation: 0,
-        }
-    }
 }
 
 struct OpenClawClientInner {

@@ -144,7 +144,7 @@ describe("OrchestratedSessionView", () => {
     expect(screen.getByText("Automated review loop")).toBeTruthy();
     expect(screen.getByText("Passed")).toBeTruthy();
 
-    await user.click(screen.getByRole("button", { name: "Transcript" }));
+    await user.click(screen.getByRole("tab", { name: "Transcript" }));
 
     await waitFor(() => {
       expect(invokeMock).toHaveBeenCalledWith("get_openclaw_chat_snapshot", {
@@ -172,8 +172,8 @@ describe("OrchestratedSessionView", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Transcript" }));
-    expect(screen.getByText("Waiting for the first orchestrated message")).toBeTruthy();
+    await user.click(screen.getByRole("tab", { name: "Transcript" }));
+    expect(screen.getByText(/Waiting for the first orchestrated message/i)).toBeTruthy();
 
     expect(invokeMock).not.toHaveBeenCalledWith("get_openclaw_chat_snapshot", expect.anything());
 

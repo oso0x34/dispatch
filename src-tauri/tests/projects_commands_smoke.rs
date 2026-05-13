@@ -85,7 +85,7 @@ fn project_commands_only_expose_project_scoped_paths_over_ipc() -> Result<(), Bo
     let listed_projects = listed
         .as_array()
         .expect("list_projects should return an array");
-    assert_eq!(listed_projects, &[created.clone()]);
+    assert_eq!(listed_projects.as_slice(), std::slice::from_ref(&created));
 
     let fetched = invoke_command(
         &webview,

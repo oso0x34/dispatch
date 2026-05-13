@@ -364,8 +364,8 @@ describe("TerminalPanel", () => {
       ],
     });
 
-    expect(await screen.findByRole("listitem", { name: /zsh #4242:2/i })).toBeTruthy();
-    expect(screen.getByRole("listitem", { name: /bash #4242:1/i })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: /zsh #4242:2/i })).toBeTruthy();
+    expect(screen.getByRole("button", { name: /bash #4242:1/i })).toBeTruthy();
     expect(screen.getAllByText("Failed").length).toBeGreaterThan(0);
 
     await waitFor(() => {
@@ -416,7 +416,7 @@ describe("TerminalPanel", () => {
 
     const { user } = renderTerminalPanel();
 
-    expect(await screen.findByRole("listitem", { name: /zsh #4242:2/i })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: /zsh #4242:2/i })).toBeTruthy();
 
     await waitFor(() => {
       expect(browserMocks.MockWebSocket.instances).toHaveLength(1);
@@ -428,7 +428,7 @@ describe("TerminalPanel", () => {
     expect(getViewport("session-4242-1764000000000000001-2")).toBeTruthy();
     expect(getViewport("session-4242-1764000000000000000-1")).toBeNull();
 
-    await user.click(screen.getByRole("listitem", { name: /bash #4242:1/i }));
+    await user.click(screen.getByRole("button", { name: /bash #4242:1/i }));
 
     await waitFor(() => {
       expect(browserMocks.MockWebSocket.instances).toHaveLength(2);
@@ -444,7 +444,7 @@ describe("TerminalPanel", () => {
     expect(xtermMocks.fitAddonInstances[0]?.fit).toHaveBeenCalled();
     expect(xtermMocks.fitAddonInstances[1]?.fit).toHaveBeenCalled();
 
-    await user.click(screen.getByRole("listitem", { name: /zsh #4242:2/i }));
+    await user.click(screen.getByRole("button", { name: /zsh #4242:2/i }));
 
     await waitFor(() => {
       expect(browserMocks.MockWebSocket.instances).toHaveLength(2);
@@ -506,7 +506,7 @@ describe("TerminalPanel", () => {
       </AppProviders>,
     );
 
-    expect(await screen.findByRole("listitem", { name: /bash #4300:1/i })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: /bash #4300:1/i })).toBeTruthy();
 
     await waitFor(() => {
       expect(browserMocks.MockWebSocket.instances).toHaveLength(1);
@@ -569,7 +569,7 @@ describe("TerminalPanel", () => {
 
     renderTerminalPanel();
 
-    expect(await screen.findByRole("listitem", { name: /bash #7000:1/i })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: /bash #7000:1/i })).toBeTruthy();
 
     await waitFor(() => {
       expect(browserMocks.MockWebSocket.instances).toHaveLength(1);
@@ -626,7 +626,7 @@ describe("TerminalPanel", () => {
 
     renderTerminalPanel();
 
-    expect(await screen.findByRole("listitem", { name: /bash #7200:1/i })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: /bash #7200:1/i })).toBeTruthy();
 
     await waitFor(() => {
       expect(browserMocks.MockWebSocket.instances).toHaveLength(1);
@@ -683,7 +683,7 @@ describe("TerminalPanel", () => {
 
     renderTerminalPanel();
 
-    expect(await screen.findByRole("listitem", { name: /bash #7100:1/i })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: /bash #7100:1/i })).toBeTruthy();
 
     await waitFor(() => {
       expect(xtermMocks.terminalInstances).toHaveLength(1);
@@ -741,7 +741,7 @@ describe("TerminalPanel", () => {
 
     const { user } = renderTerminalPanelWithOverlayState();
 
-    expect(await screen.findByRole("listitem", { name: /bash #5150:1/i })).toBeTruthy();
+    expect(await screen.findByRole("button", { name: /bash #5150:1/i })).toBeTruthy();
 
     await waitFor(() => {
       expect(browserMocks.MockWebSocket.instances).toHaveLength(1);

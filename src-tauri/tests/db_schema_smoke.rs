@@ -10,6 +10,8 @@ use dispatch_lib::{configure_app, db::Database};
 use rusqlite::Connection;
 use tauri::{test::mock_builder, Manager};
 
+type ForeignKeyShape = BTreeSet<(String, String, String)>;
+
 fn build_app() -> tauri::App<tauri::test::MockRuntime> {
     configure_app(mock_builder())
         .build(tauri::generate_context!())
@@ -20,7 +22,7 @@ fn build_app() -> tauri::App<tauri::test::MockRuntime> {
 fn database_bootstrap_uses_tauri_app_data_directory() -> Result<(), Box<dyn Error>> {
     let app = build_app();
     let expected_app_data_dir = app.path().app_data_dir()?;
-    let database = Database::initialize_for_app(&app.handle())?;
+    let database = Database::initialize_for_app(app.handle())?;
 
     assert!(
         database.path().starts_with(&expected_app_data_dir),
@@ -233,6 +235,7 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
                 (3, "003_task_metadata".to_string()),
                 (4, "004_save_points".to_string()),
                 (5, "005_chat_cache".to_string()),
+                (6, "006_native_cli_profiles".to_string()),
             ]
         );
 
@@ -252,6 +255,7 @@ fn fresh_database_matches_expected_schema_shape() -> Result<(), Box<dyn Error>> 
                 (3, "003_task_metadata".to_string()),
                 (4, "004_save_points".to_string()),
                 (5, "005_chat_cache".to_string()),
+                (6, "006_native_cli_profiles".to_string()),
             ],
             "re-initializing the same database should not duplicate migration tracking"
         );
@@ -394,6 +398,7 @@ fn existing_task_rows_receive_metadata_defaults_when_migrated() -> Result<(), Bo
                 (3, "003_task_metadata".to_string()),
                 (4, "004_save_points".to_string()),
                 (5, "005_chat_cache".to_string()),
+                (6, "006_native_cli_profiles".to_string()),
             ]
         );
 
@@ -444,7 +449,7 @@ fn table_columns(connection: &Connection, table_name: &str) -> Result<Vec<String
 fn foreign_keys(
     connection: &Connection,
     table_name: &str,
-) -> Result<BTreeSet<(String, String, String)>, Box<dyn Error>> {
+) -> Result<ForeignKeyShape, Box<dyn Error>> {
     let mut statement = connection.prepare(&format!("PRAGMA foreign_key_list('{table_name}')"))?;
     let keys = statement
         .query_map([], |row| {

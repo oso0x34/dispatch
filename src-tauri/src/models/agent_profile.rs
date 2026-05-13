@@ -17,6 +17,18 @@ pub struct AgentProfile {
     pub updated_at: i64,
 }
 
+#[derive(Debug, Clone)]
+pub struct AgentProfileStorage {
+    pub id: String,
+    pub name: String,
+    pub program: String,
+    pub args_json: String,
+    pub env_json: String,
+    pub cwd_json: String,
+    pub created_at: i64,
+    pub updated_at: i64,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum AgentArg {
@@ -43,16 +55,18 @@ pub enum AgentCwd {
 }
 
 impl AgentProfile {
-    pub fn from_storage(
-        id: String,
-        name: String,
-        program: String,
-        args_json: String,
-        env_json: String,
-        cwd_json: String,
-        created_at: i64,
-        updated_at: i64,
-    ) -> AppResult<Self> {
+    pub fn from_storage(storage: AgentProfileStorage) -> AppResult<Self> {
+        let AgentProfileStorage {
+            id,
+            name,
+            program,
+            args_json,
+            env_json,
+            cwd_json,
+            created_at,
+            updated_at,
+        } = storage;
+
         let args = serde_json::from_str(&args_json).map_err(|error| {
             AppError::new(format!(
                 "failed to deserialize agent profile args for {id}: {error}"

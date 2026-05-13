@@ -13,7 +13,7 @@ owners:
 
 ## Why This Exists
 
-Dispatch was previously implemented from roadmap and ticket text that described architecture and feature scope well, but did not carry the actual visual source of truth. That caused the shell to drift into a competent internal-tool UI instead of the product shown in the reference captures.
+Dispatch was previously implemented from roadmap and ticket text that described architecture and feature scope well, but did not carry the actual visual source of truth. That caused the shell to drift into a competent utility UI instead of the product shown in the reference captures.
 
 This document fixes that. It makes the real visual target explicit, repo-local, and binding for future shell work.
 
@@ -36,11 +36,11 @@ These files are the current visual source of truth and are checked into the repo
 | `docs/reference/visual-rebuild/agents-diff.png` | Agents terminal/diff output treatment |
 | `docs/reference/visual-rebuild/browser.png` | Browser tab shell and embedded browser-row treatment |
 
-Behavioral context was also derived from the transcript at:
+Behavioral context was also derived from pre-release research notes that are
+not part of the public repository.
 
-- `/home/oso0x/clawd/3-PARA-Knowledge/Resources/research/youtube-transcripts/chris-builds/ditching-cursor.txt`
-
-The screenshots above are the binding visual references. The transcript is supporting product context, not a substitute for the screenshots.
+The screenshots above are the binding visual references. The research notes are
+supporting product context, not a substitute for the screenshots.
 
 ## Product Definition
 

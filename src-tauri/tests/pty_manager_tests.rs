@@ -21,8 +21,8 @@ use dispatch_lib::{
 #[cfg(unix)]
 use portable_pty::{Child, ChildKiller, ExitStatus};
 use rusqlite::params;
-use tauri::Manager;
 use tauri::test::mock_builder;
+use tauri::Manager;
 
 #[test]
 fn shell_launch_plan_uses_registered_project_root_as_cwd() -> Result<(), Box<dyn Error>> {
@@ -206,12 +206,7 @@ fn bash_shell_launch_uses_a_dispatch_init_file_that_unaliases_embedded_ai_clis(
     let database = Database::initialize_at(&database_path)?;
     let project = project_registry::create_project(&database, "Workspace", &project_root)?;
 
-    let launch_plan = pty_manager::resolve_shell_launch(
-        &project,
-        Some("/bin/bash"),
-        None,
-        None,
-    )?;
+    let launch_plan = pty_manager::resolve_shell_launch(&project, Some("/bin/bash"), None, None)?;
 
     assert_eq!(launch_plan.program, "/bin/bash");
     assert_eq!(launch_plan.args.len(), 2);
@@ -481,7 +476,11 @@ fn assert_shell_args_match_launch_strategy(
     args: &[String],
 ) -> Result<(), Box<dyn Error>> {
     #[cfg(unix)]
-    if Path::new(program).file_name().and_then(|name| name.to_str()) == Some("bash") {
+    if Path::new(program)
+        .file_name()
+        .and_then(|name| name.to_str())
+        == Some("bash")
+    {
         assert_eq!(args.len(), 2);
         assert_eq!(args[0], "--init-file");
         let init_contents = fs::read_to_string(&args[1])?;

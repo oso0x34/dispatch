@@ -72,7 +72,8 @@ fn release_configuration_enables_linux_appimage_and_deb_bundles() {
         .as_array()
         .expect("bundle.icon should be an array");
     assert!(
-        icons.iter()
+        icons
+            .iter()
             .any(|value| value.as_str() == Some("icons/icon.png")),
         "bundle.icon should include the shipping Linux icon"
     );
@@ -83,7 +84,10 @@ fn release_artifacts_match_expected_linux_bundle_shape_when_present() {
     let bundle_dir = env::var_os("DISPATCH_RELEASE_BUNDLE_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|| repo_root().join("target/release/bundle"));
-    let require_artifacts = env::var("DISPATCH_REQUIRE_RELEASE_ARTIFACTS").ok().as_deref() == Some("1");
+    let require_artifacts = env::var("DISPATCH_REQUIRE_RELEASE_ARTIFACTS")
+        .ok()
+        .as_deref()
+        == Some("1");
 
     if !bundle_dir.exists() {
         assert!(

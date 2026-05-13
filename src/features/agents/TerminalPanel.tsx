@@ -201,7 +201,7 @@ function PreviewTerminalViewport({
   active,
   onOutputChunk,
 }: Pick<TerminalSessionViewportProps, "session" | "active" | "onOutputChunk">) {
-  const output = getBrowserPreviewTerminalOutput(session.id) ?? `${session.program} ~/projects/dispatch\n$`;
+  const output = getBrowserPreviewTerminalOutput(session.id) ?? `${session.program} /workspace/dispatch\n$`;
 
   useEffect(() => {
     if (!active) {
@@ -634,7 +634,7 @@ export function TerminalPanel({ projectId, active }: TerminalPanelProps) {
   const selectSession = useDispatchStore((state) => state.selectSession);
   const createTerminalSession = useDispatchStore((state) => state.createTerminalSession);
   const dispatchAgent = useDispatchStore((state) => state.dispatchAgent);
-  const dispatchViaVicam = useDispatchStore((state) => state.dispatchViaVicam);
+  const dispatchViaOpenClaw = useDispatchStore((state) => state.dispatchViaOpenClaw);
   const terminateSession = useDispatchStore((state) => state.terminateSession);
   const openTasksOverlay = useDispatchStore((state) => state.openTasksOverlay);
   const clearTerminalError = useDispatchStore((state) => state.clearTerminalError);
@@ -850,12 +850,13 @@ export function TerminalPanel({ projectId, active }: TerminalPanelProps) {
         ) : null}
 
         <div className="grid min-h-0 flex-1 grid-cols-[8.75rem_minmax(0,1fr)] gap-2 p-1.5">
-          <SessionSidebar
-            sessions={sessions}
-            selectedSessionId={selectedSessionId}
-            isReady={isReady}
-            isCreating={isCreating}
-            onSelectSession={selectSession}
+            <SessionSidebar
+              sessions={sessions}
+              selectedSessionId={selectedSessionId}
+              openClawStatus={openClawStatus}
+              isReady={isReady}
+              isCreating={isCreating}
+              onSelectSession={selectSession}
             onCreateSession={handleCreateSession}
           />
 
@@ -990,8 +991,8 @@ export function TerminalPanel({ projectId, active }: TerminalPanelProps) {
           }
 
           clearTerminalError();
-          if (route === "vicam") {
-            await dispatchViaVicam({
+          if (route === "openclaw") {
+            await dispatchViaOpenClaw({
               prompt: prompt ?? "",
             });
           } else {

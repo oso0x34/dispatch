@@ -82,7 +82,7 @@ Dispatch post-v1:
 | `react` | `19.2.4` |
 | `react-dom` | `19.2.4` |
 | `typescript` | `5.9.3` |
-| `vite` | `8.0.1` |
+| `vite` | `8.0.12` |
 | `@vitejs/plugin-react` | `6.0.1` |
 | `tailwindcss` | `4.2.2` |
 | `@tailwindcss/vite` | `4.2.2` |
@@ -143,7 +143,7 @@ Dispatch post-v1:
 ## Canonical Repo Layout
 
 ```text
-~/projects/dispatch/
+repo-root/
 ├── docs/
 │   ├── adr/
 │   ├── checklists/
@@ -222,8 +222,8 @@ Dispatch post-v1:
 **Commands**
 
 ```bash
-mkdir -p ~/projects/dispatch/docs/adr ~/projects/dispatch/docs/checklists ~/projects/dispatch/scripts/smoke
-cd ~/projects/dispatch && node -v && rustc -V && cargo -V
+mkdir -p repo-root/docs/adr repo-root/docs/checklists repo-root/scripts/smoke
+node -v && rustc -V && cargo -V
 ```
 
 **Implementation**
@@ -334,9 +334,8 @@ cd ~/projects/dispatch && node -v && rustc -V && cargo -V
 **Commands**
 
 ```bash
-cd ~/projects
 npm create tauri-app@latest dispatch
-cd ~/projects/dispatch
+cd repo root
 npm install tailwindcss@4.2.2 @tailwindcss/vite@4.2.2 zustand@5.0.12 immer@11.1.4 react-resizable-panels@4.7.3 lucide-react@0.577.0
 npm install -D vitest@4.1.0 @testing-library/react@16.3.2 @testing-library/user-event@14.6.1
 npm run tauri dev
@@ -344,7 +343,7 @@ npm run tauri dev
 
 **Implementation**
 
-- Scaffold the app at `~/projects/dispatch`.
+- Scaffold the app at `repo root`.
 - Replace the default app with the Dispatch shell and six top-level tabs.
 - Implement lazy-mount-once tab behavior:
   - persistent after first open: Agents, Files, History, Chat
@@ -359,11 +358,11 @@ npm run tauri dev
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml app_boot_smoke`
+  - `cargo test --manifest-path src-tauri/Cargo.toml app_boot_smoke`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/app/__tests__/TabHost.test.tsx`
+  - `npm run test -- src/app/__tests__/TabHost.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-0b-shell.sh`
+  - `bash scripts/smoke/phase-0b-shell.sh`
 
 **Done when**
 
@@ -410,7 +409,7 @@ npm run tauri dev
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 npm install @tauri-apps/plugin-dialog@2.6.0
 cargo test --manifest-path src-tauri/Cargo.toml projects_db_tests
 ```
@@ -441,12 +440,12 @@ cargo test --manifest-path src-tauri/Cargo.toml projects_db_tests
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml projects_db_tests`
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml path_guard_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml projects_db_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml path_guard_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/projects/__tests__/ProjectSwitcher.test.tsx`
+  - `npm run test -- src/features/projects/__tests__/ProjectSwitcher.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-1-projects.sh`
+  - `bash scripts/smoke/phase-1-projects.sh`
 
 **Done when**
 
@@ -490,7 +489,7 @@ cargo test --manifest-path src-tauri/Cargo.toml projects_db_tests
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 npm install @xterm/xterm@6.0.0 @xterm/addon-fit@0.11.0 @xterm/addon-search@0.16.0 @xterm/addon-web-links@0.12.0 @xterm/addon-webgl@0.19.0
 cargo test --manifest-path src-tauri/Cargo.toml pty_manager_tests
 ```
@@ -519,12 +518,12 @@ cargo test --manifest-path src-tauri/Cargo.toml pty_manager_tests
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml pty_manager_tests`
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml terminal_ws_attach_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml pty_manager_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml terminal_ws_attach_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/agents/__tests__/TerminalPanel.test.tsx`
+  - `npm run test -- src/features/agents/__tests__/TerminalPanel.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-2-terminal-core.sh`
+  - `bash scripts/smoke/phase-2-terminal-core.sh`
 
 **Done when**
 
@@ -566,7 +565,7 @@ cargo test --manifest-path src-tauri/Cargo.toml pty_manager_tests
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 cargo test --manifest-path src-tauri/Cargo.toml dispatch_validation_tests
 cargo test --manifest-path src-tauri/Cargo.toml task_transition_tests
 ```
@@ -614,12 +613,12 @@ enum AgentArg {
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml dispatch_validation_tests`
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml task_transition_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml dispatch_validation_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml task_transition_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/agents/__tests__/DispatchModal.test.tsx`
+  - `npm run test -- src/features/agents/__tests__/DispatchModal.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-3-direct-dispatch.sh`
+  - `bash scripts/smoke/phase-3-direct-dispatch.sh`
 
 **Done when**
 
@@ -660,7 +659,7 @@ enum AgentArg {
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 npm install @dnd-kit/core@6.3.1 @dnd-kit/sortable@10.0.0 @tanstack/react-virtual@3.13.23 react-markdown@10.1.0 remark-gfm@4.0.1 rehype-highlight@7.0.2 rehype-slug@6.0.0 highlight.js@11.11.1
 npm run test -- src/features/tasks/__tests__/KanbanBoard.test.tsx
 ```
@@ -681,11 +680,11 @@ npm run test -- src/features/tasks/__tests__/KanbanBoard.test.tsx
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml task_export_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml task_export_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/tasks/__tests__/KanbanBoard.test.tsx`
+  - `npm run test -- src/features/tasks/__tests__/KanbanBoard.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-4-tasks.sh`
+  - `bash scripts/smoke/phase-4-tasks.sh`
 
 **Done when**
 
@@ -727,7 +726,7 @@ npm run test -- src/features/tasks/__tests__/KanbanBoard.test.tsx
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 npm install @tauri-apps/plugin-opener@2.5.3
 cargo test --manifest-path src-tauri/Cargo.toml project_fs_tests
 cargo test --manifest-path src-tauri/Cargo.toml file_watch_tests
@@ -752,12 +751,12 @@ cargo test --manifest-path src-tauri/Cargo.toml file_watch_tests
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml project_fs_tests`
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml file_watch_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml project_fs_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml file_watch_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/files/__tests__/FilePreview.test.tsx`
+  - `npm run test -- src/features/files/__tests__/FilePreview.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-5-files.sh`
+  - `bash scripts/smoke/phase-5-files.sh`
 
 **Done when**
 
@@ -793,7 +792,7 @@ cargo test --manifest-path src-tauri/Cargo.toml file_watch_tests
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 cargo test --manifest-path src-tauri/Cargo.toml save_point_tests
 cargo test --manifest-path src-tauri/Cargo.toml history_restore_tests
 npm run test -- src/features/history/__tests__/HistoryTab.test.tsx
@@ -824,12 +823,12 @@ npm run test -- src/features/history/__tests__/HistoryTab.test.tsx
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml save_point_tests`
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml history_restore_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml save_point_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml history_restore_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/history/__tests__/HistoryTab.test.tsx`
+  - `npm run test -- src/features/history/__tests__/HistoryTab.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-6-history.sh`
+  - `bash scripts/smoke/phase-6-history.sh`
 
 **Done when**
 
@@ -862,7 +861,7 @@ npm run test -- src/features/history/__tests__/HistoryTab.test.tsx
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 cargo test --manifest-path src-tauri/Cargo.toml openclaw_client_tests
 bash scripts/smoke/phase-7-openclaw.sh
 ```
@@ -883,7 +882,7 @@ bash scripts/smoke/phase-7-openclaw.sh
   - sessions send
   - sessions kill
 - Show orchestrated sessions in the Agents sidebar with a distinct badge.
-- Activate the "Dispatch via VICAM" button when connected.
+- Activate the "Dispatch via OpenClaw" button when connected.
 - Upgrade the "Auto" agent mode:
   - connected -> OpenClaw picks the agent
   - disconnected -> fallback to last-used direct CLI agent
@@ -892,11 +891,11 @@ bash scripts/smoke/phase-7-openclaw.sh
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml openclaw_client_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml openclaw_client_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/agents/__tests__/OpenClawStatus.test.tsx`
+  - `npm run test -- src/features/agents/__tests__/OpenClawStatus.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-7-openclaw.sh`
+  - `bash scripts/smoke/phase-7-openclaw.sh`
 
 **Done when**
 
@@ -938,7 +937,7 @@ bash scripts/smoke/phase-7-openclaw.sh
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 cargo test --manifest-path src-tauri/Cargo.toml chat_stream_tests
 cargo test --manifest-path src-tauri/Cargo.toml review_router_tests
 npm run test -- src/features/chat/__tests__/ChatTab.test.tsx
@@ -967,12 +966,12 @@ npm run test -- src/features/chat/__tests__/ChatTab.test.tsx
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml chat_stream_tests`
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml review_router_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml chat_stream_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml review_router_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/chat/__tests__/ChatTab.test.tsx`
+  - `npm run test -- src/features/chat/__tests__/ChatTab.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-8-chat-review.sh`
+  - `bash scripts/smoke/phase-8-chat-review.sh`
 
 **Done when**
 
@@ -1015,7 +1014,7 @@ npm run test -- src/features/chat/__tests__/ChatTab.test.tsx
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 npm install cmdk@1.1.1 react-hotkeys-hook@5.2.4 @tauri-apps/plugin-notification@2.3.3 @tauri-apps/plugin-global-shortcut@2.3.1
 cargo test --manifest-path src-tauri/Cargo.toml settings_secret_tests
 npm run test -- src/features/settings/__tests__/SettingsDialog.test.tsx
@@ -1054,11 +1053,11 @@ npm run test -- src/features/settings/__tests__/SettingsDialog.test.tsx
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml settings_secret_tests`
+  - `cargo test --manifest-path src-tauri/Cargo.toml settings_secret_tests`
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/settings/__tests__/SettingsDialog.test.tsx`
+  - `npm run test -- src/features/settings/__tests__/SettingsDialog.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-9-system.sh`
+  - `bash scripts/smoke/phase-9-system.sh`
 
 **Done when**
 
@@ -1088,7 +1087,7 @@ npm run test -- src/features/settings/__tests__/SettingsDialog.test.tsx
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 npm run tauri build
 cargo test --manifest-path src-tauri/Cargo.toml release_smoke
 bash scripts/smoke/phase-10-release.sh
@@ -1111,9 +1110,9 @@ bash scripts/smoke/phase-10-release.sh
 **Verification**
 
 - Rust:
-  - `cd ~/projects/dispatch && cargo test --manifest-path src-tauri/Cargo.toml release_smoke`
+  - `cargo test --manifest-path src-tauri/Cargo.toml release_smoke`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-10-release.sh`
+  - `bash scripts/smoke/phase-10-release.sh`
 - Release metrics:
   - cold start under 2 seconds on target Linux box
   - direct dispatch spawn under 3 seconds
@@ -1145,7 +1144,7 @@ bash scripts/smoke/phase-10-release.sh
 **Commands**
 
 ```bash
-cd ~/projects/dispatch
+cd repo root
 npm run test -- src/features/browser/__tests__/BrowserTab.test.tsx
 bash scripts/smoke/phase-11-browser.sh
 ```
@@ -1162,9 +1161,9 @@ bash scripts/smoke/phase-11-browser.sh
 **Verification**
 
 - Component:
-  - `cd ~/projects/dispatch && npm run test -- src/features/browser/__tests__/BrowserTab.test.tsx`
+  - `npm run test -- src/features/browser/__tests__/BrowserTab.test.tsx`
 - Smoke:
-  - `cd ~/projects/dispatch && bash scripts/smoke/phase-11-browser.sh`
+  - `bash scripts/smoke/phase-11-browser.sh`
 
 **Done when**
 

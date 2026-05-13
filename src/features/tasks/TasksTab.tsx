@@ -114,7 +114,7 @@ export function TasksTab({ linkedTaskId = null }: TasksTabProps) {
   const openClawStatus = useDispatchStore((state) => state.openClawStatus);
   const initializeTerminalWorkspace = useDispatchStore((state) => state.initializeTerminalWorkspace);
   const dispatchAgent = useDispatchStore((state) => state.dispatchAgent);
-  const dispatchViaVicam = useDispatchStore((state) => state.dispatchViaVicam);
+  const dispatchViaOpenClaw = useDispatchStore((state) => state.dispatchViaOpenClaw);
   const clearTerminalError = useDispatchStore((state) => state.clearTerminalError);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [agentModeStatus, setAgentModeStatus] = useState<AgentModeStatus>("idle");
@@ -459,8 +459,8 @@ export function TasksTab({ linkedTaskId = null }: TasksTabProps) {
           }
 
           clearTerminalError();
-          if (route === "vicam") {
-            await dispatchViaVicam({
+          if (route === "openclaw") {
+            await dispatchViaOpenClaw({
               taskId: dispatchTaskId,
               prompt: prompt ?? "",
             });

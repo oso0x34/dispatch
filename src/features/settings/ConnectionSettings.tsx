@@ -357,7 +357,7 @@ export function ConnectionSettings({ active = true }: ConnectionSettingsProps) {
               value={gatewayUrl}
               onChange={(event) => setGatewayUrl(event.target.value)}
               className="dispatch-input mt-1.5 h-10 w-full rounded-lg px-3 text-sm"
-              placeholder="ws://127.0.0.1:7331"
+              placeholder="ws://127.0.0.1:18789"
               aria-label="Gateway URL"
             />
             <p className="dispatch-text-tertiary mt-1.5 text-xs leading-5">

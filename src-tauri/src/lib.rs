@@ -130,9 +130,9 @@ pub fn run() {
         tauri::Builder::default().plugin(tauri_plugin_global_shortcut::Builder::new().build()),
     )
     .setup(|app| {
-        let logging_state = logging::init(&app.handle())?;
+        let logging_state = logging::init(app.handle())?;
         error::install_panic_hook(logging_state.log_directory().to_path_buf())?;
-        let database = Arc::new(Database::initialize_for_app(&app.handle())?);
+        let database = Arc::new(Database::initialize_for_app(app.handle())?);
         let pty_manager = app.state::<Arc<PtyManager>>().inner().clone();
         let openclaw_client = app.state::<Arc<OpenClawClient>>().inner().clone();
         let openclaw_chat = app.state::<Arc<OpenClawChatService>>().inner().clone();
@@ -150,12 +150,13 @@ pub fn run() {
             );
         }
 
-        app.state::<AppState>().configure_runtime_debug(RuntimeDebugSnapshot {
-            log_directory: Some(logging_state.log_directory().to_path_buf()),
-            active_log_path: Some(logging_state.active_log_path().to_path_buf()),
-            session_logs_directory: Some(session_supervisor.session_logs_dir().to_path_buf()),
-            stale_sessions_abandoned_at_boot: abandoned_sessions,
-        });
+        app.state::<AppState>()
+            .configure_runtime_debug(RuntimeDebugSnapshot {
+                log_directory: Some(logging_state.log_directory().to_path_buf()),
+                active_log_path: Some(logging_state.active_log_path().to_path_buf()),
+                session_logs_directory: Some(session_supervisor.session_logs_dir().to_path_buf()),
+                stale_sessions_abandoned_at_boot: abandoned_sessions,
+            });
 
         pty_manager.configure_ui(app.handle().clone())?;
         pty_manager.configure_supervision(
@@ -165,8 +166,8 @@ pub fn run() {
         )?;
         pty_manager.configure_review_routing(openclaw_client, openclaw_chat, review_router)?;
 
-        tray_service.build(&app.handle())?;
-        services::tray::refresh_running_session_tooltip(&app.handle(), database.as_ref())?;
+        tray_service.build(app.handle())?;
+        services::tray::refresh_running_session_tooltip(app.handle(), database.as_ref())?;
 
         app.manage(logging_state);
         app.manage(database.clone());

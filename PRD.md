@@ -1,10 +1,9 @@
 # Dispatch — Product Requirements Document
 
-> **Product Name:** Dispatch (internally: VICAM Cockpit v2)
+> **Product Name:** Dispatch
 > **Status:** Draft v1.2
 > **Date:** 2026-03-19
-> **Author:** VICAM + Oso
-> **Repo Target:** `~/projects/dispatch/`
+> **Repo Target:** this repository
 
 ---
 
@@ -16,8 +15,8 @@ Dispatch is a **desktop command center** for AI-orchestrated software developmen
 
 ### Two Audiences
 
-1. **Oso (power user)** — OpenClaw is running. Dispatch connects to it for orchestrated dispatch, VICAM chat, memory, multi-model session management. Full power.
-2. **Anyone else (standalone)** — No OpenClaw. Dispatch works as a standalone app with direct CLI spawning. Open a terminal, run `codex`, `claude`, `gemini`, whatever — it just works. Kanban, file browser, git save points, terminal tabs all function independently.
+1. **Connected mode** — OpenClaw is running. Dispatch connects to it for orchestrated dispatch, chat, and multi-model session management.
+2. **Standalone mode** — No OpenClaw. Dispatch works as a standalone app with direct CLI spawning. Open a terminal, run `codex`, `claude`, `gemini`, or another local tool. Kanban, file browser, git save points, terminal tabs all function independently.
 
 **OpenClaw is a supercharger, not a requirement.**
 
@@ -34,7 +33,7 @@ Dispatch is that place.
 | **Orchestrate** (Chris/Melty) | Mac-only, Electron (200MB+), Claude Agents SDK dependency, single-project, waitlist/closed source |
 | **Conductor OSS** | CLI-first, no native desktop app, solo-dev project, limited agent model support |
 | **Vibe Kanban** | No orchestration layer, no chat/AI dispatch, kanban-only |
-| **Current vicam-cockpit** | Built under severe constraints, browser-based, not a real desktop app |
+| **Browser-based local tools** | Not native desktop apps and often require more context switching |
 
 Dispatch takes the best ideas from all of these. When paired with OpenClaw, it gains orchestrated multi-model dispatch, persistent AI chat, and memory. Without it, it's still a fully functional project command center with terminals and task management.
 
@@ -117,7 +116,7 @@ Dispatch has **two ways to send work to agents:**
 2. Dispatch calls OpenClaw `sessions_spawn` with model + prompt
 3. OpenClaw spawns the agent, monitors quality, can steer/kill
 4. Output streams back via WebSocket → rendered in Agents tab
-5. VICAM (AI) is in the loop — can auto-review, flag issues, redirect
+5. OpenClaw (AI) is in the loop — can auto-review, flag issues, redirect
 
 #### Path B: Direct CLI (Standalone — works without OpenClaw)
 1. Task card → "Send to Agent" → **Open in Terminal** button
@@ -181,7 +180,7 @@ OpenClaw just adds the AI orchestration layer on top.
 ### Data Flow
 
 **With OpenClaw:**
-1. **Chat** → WebSocket to OpenClaw Gateway → VICAM processes → response streams back
+1. **Chat** → WebSocket to OpenClaw Gateway → OpenClaw processes → response streams back
 2. **Orchestrated dispatch** → Dispatch calls OpenClaw `sessions_spawn` → agent starts → stream in Agents tab
 3. **Agent monitoring** → OpenClaw WebSocket pushes session events → Cockpit renders live output
 
@@ -205,7 +204,7 @@ Unlike Orchestrate (single project), Dispatch manages multiple projects:
 │  TX Flows          ~/Documents/StablebooksV1/       │
 │  ProbableWatch     ~/Documents/probablewatch/       │
 │  Autoresearch      ~/Documents/autoresearch/        │
-│  Dispatch          ~/projects/dispatch/     │
+│  Dispatch          repo-root/     │
 │                                                     │
 │  + Add Project                                      │
 └─────────────────────────────────────────────────────┘
@@ -217,7 +216,7 @@ Each project has its own:
 - Git history / save points
 - Agent sessions scoped to that project
 
-Chat (VICAM) is **global** — it knows all projects and can work across them.
+Chat (OpenClaw) is **global** — it knows all projects and can work across them.
 
 ---
 
@@ -225,7 +224,7 @@ Chat (VICAM) is **global** — it knows all projects and can work across them.
 
 ### 4.1 Chat (Orchestrate)
 
-**Purpose:** Talk to VICAM directly from the app. The primary command interface.
+**Purpose:** Talk to OpenClaw directly from the app. The primary command interface.
 
 | Feature | Description |
 |---------|-------------|
@@ -233,7 +232,7 @@ Chat (VICAM) is **global** — it knows all projects and can work across them.
 | **Input bar** | Text input + send button, bottom-fixed |
 | **Quick actions** | "Create task" button next to input |
 | **Model selector** | Dropdown to override model for next message |
-| **Context awareness** | VICAM knows which project is selected, can reference files/tasks |
+| **Context awareness** | OpenClaw knows which project is selected, can reference files/tasks |
 | **Voice input** | Microphone button for voice-to-text (Whisper) |
 | **Code blocks** | Syntax-highlighted, copy button, collapsible for long output |
 
@@ -249,7 +248,7 @@ Chat (VICAM) is **global** — it knows all projects and can work across them.
 | **Cards** | Title, description (markdown), priority, assignee (agent/model), created date |
 | **Drag & drop** | Move cards between columns |
 | **"Send to Agent" button** | Per-card. Click → picks model → spawns agent → card moves to In Progress |
-| **Agent assignment** | Choose model/agent per task (Opus, Codex, Gemini, etc.) or let VICAM auto-pick |
+| **Agent assignment** | Choose model/agent per task (Opus, Codex, Gemini, etc.) or let OpenClaw auto-pick |
 | **Subtasks** | Checkbox list within a card |
 | **Labels/tags** | Color-coded categorization |
 | **Filters** | By status, label, assignee, project |
@@ -262,7 +261,7 @@ Chat (VICAM) is **global** — it knows all projects and can work across them.
 3. Dispatch calls OpenClaw `sessions_spawn` with task description
 4. Card auto-moves to "In Progress" with agent session ID linked
 5. When agent completes → card moves to "Review"
-6. VICAM reviews output → card moves to "Done" or back to "In Progress" with feedback
+6. OpenClaw reviews output → card moves to "Done" or back to "In Progress" with feedback
 
 ### 4.3 Agents
 
@@ -304,7 +303,7 @@ Chat (VICAM) is **global** — it knows all projects and can work across them.
 │                                         │
 │  ┌──────────┐    ┌──────────────────┐   │
 │  │ Dispatch  │    │ Open in Terminal │   │
-│  │ (via VICAM)│   │ (direct CLI)    │   │
+│  │ (via OpenClaw)│   │ (direct CLI)    │   │
 │  └──────────┘    └──────────────────┘   │
 │                                         │
 │  ℹ️ Dispatch sends through OpenClaw     │
@@ -374,7 +373,7 @@ Chat (VICAM) is **global** — it knows all projects and can work across them.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ [⚡ VICAM]  [Project: TX Flows ▾]   Chat│Tasks│Agents│Files│History│Browser   [⚙] │
+│ [⚡ OpenClaw]  [Project: TX Flows ▾]   Chat│Tasks│Agents│Files│History│Browser   [⚙] │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -394,7 +393,7 @@ Chat (VICAM) is **global** — it knows all projects and can work across them.
 - Desktop notifications when:
   - Agent completes a task
   - Agent encounters an error
-  - VICAM has a message/update
+  - OpenClaw has a message/update
   - Build/dev server status changes
 
 ### 5.4 Settings Panel
@@ -422,7 +421,7 @@ Chat (VICAM) is **global** — it knows all projects and can work across them.
 | **Border** | Subtle (`#2a2a2a`) |
 | **Text primary** | Off-white (`#e5e5e5`) |
 | **Text secondary** | Muted gray (`#888888`) |
-| **Accent** | Electric blue (`#3b82f6`) — VICAM's energy |
+| **Accent** | Electric blue (`#3b82f6`) — OpenClaw's energy |
 | **Success** | Green (`#22c55e`) |
 | **Warning** | Amber (`#f59e0b`) |
 | **Error** | Red (`#ef4444`) |
@@ -458,7 +457,7 @@ Everything except Chat and orchestrated dispatch works:
 ### With OpenClaw (Enhanced Mode)
 
 Everything above, plus:
-- ✅ Chat with VICAM (or whatever AI persona the user configures)
+- ✅ Chat with OpenClaw (or whatever AI persona the user configures)
 - ✅ Orchestrated dispatch — AI monitors, steers, and quality-checks agent work
 - ✅ Stream view for agent sessions (clean markdown output)
 - ✅ Multi-model routing through a single interface
@@ -581,7 +580,7 @@ Everything above, plus:
 | **Binary size** | < 15MB |
 | **Memory usage** | < 150MB idle, < 300MB with 5 agents streaming |
 | **Agent dispatch** | Task → agent running in < 3 seconds |
-| **Daily usage** | Oso uses Dispatch instead of Telegram for agent work |
+| **Daily usage** | The user uses Dispatch instead of Telegram for agent work |
 
 ---
 
@@ -602,15 +601,15 @@ Everything above, plus:
 
 | # | Question | Decision | Date |
 |---|----------|----------|------|
-| 1 | **Product name** | **Dispatch** — clean, standalone brand. VICAM Cockpit internally. | 2026-03-19 |
+| 1 | **Product name** | **Dispatch** — clean, standalone brand. legacy cockpit internally. | 2026-03-19 |
 | 2 | **Kanban markdown export** | **Yes** — tasks export as `.md` files in project folder. Git-trackable, portable. | 2026-03-19 |
-| 3 | **Agent auto-pick** | **Auto-pick as a dropdown option** — agent selector shows "Auto (let VICAM pick)" at the top of the list alongside manual choices. In standalone mode, defaults to last-used agent. | 2026-03-19 |
+| 3 | **Agent auto-pick** | **Auto-pick as a dropdown option** — agent selector shows "Auto (let OpenClaw pick)" at the top of the list alongside manual choices. In standalone mode, defaults to last-used agent. | 2026-03-19 |
 | 4 | **PR integration** | **Phase 8** — GitHub PR creation/review. Skills already exist for this. | 2026-03-19 |
 | 5 | **Voice input** | **Yes** — mic button in Chat tab, voice-to-text. | 2026-03-19 |
 | 6 | **Multi-display** | **Yes** — optimize for ultrawide and dual monitor layouts. Responsive panels, detachable/resizable. | 2026-03-19 |
 | 7 | **Packaging** | **Open source, MIT license.** Distribute as `.AppImage` (Linux primary), `.deb`, and macOS `.dmg`. Flatpak later if demand. GitHub Releases for distribution. | 2026-03-19 |
 | 8 | **API key management** | **Yes** — Settings screen for API keys (ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_API_KEY, etc.). Falls back to shell env if not set in app. Stored locally in encrypted SQLite or OS keychain. | 2026-03-19 |
-| 9 | **Branding** | **Dispatch** is the brand. Own identity, own logo, separate from VICAM. VICAM is the AI persona inside Dispatch when OpenClaw is connected — but Dispatch stands alone. | 2026-03-19 |
+| 9 | **Branding** | **Dispatch** is the brand. Own identity, own logo, separate from OpenClaw. OpenClaw is the AI persona inside Dispatch when OpenClaw is connected — but Dispatch stands alone. | 2026-03-19 |
 
 ## 13. Open Questions (Remaining)
 

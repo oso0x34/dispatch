@@ -93,6 +93,7 @@ function renderSidebar(
     <SessionSidebar
       sessions={sessions}
       selectedSessionId={sessions[0]?.id ?? null}
+      openClawStatus={_openClawStatus}
       isReady={true}
       isCreating={false}
       onSelectSession={onSelectSession}
@@ -115,7 +116,7 @@ describe("OpenClawStatus", () => {
     renderSidebar([], buildOpenClawStatus("disconnected"));
 
     expect(screen.getByText(/Standalone mode/i)).toBeTruthy();
-    expect(screen.getByText("No sessions yet.")).toBeTruthy();
+    expect(screen.getByText("No active sessions")).toBeTruthy();
   });
 
   it("shows connected orchestrated sessions with a distinct openclaw badge", () => {

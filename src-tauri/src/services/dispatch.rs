@@ -528,6 +528,13 @@ fn remember_last_used_local_profile(database: &Database, profile_id: &str) -> Ap
     })
 }
 
+fn now_unix_seconds() -> i64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("system clock is before unix epoch")
+        .as_secs() as i64
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::BTreeMap;
@@ -572,11 +579,4 @@ mod tests {
 
         assert_eq!(args, vec!["Continue the session".to_string()]);
     }
-}
-
-fn now_unix_seconds() -> i64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("system clock is before unix epoch")
-        .as_secs() as i64
 }

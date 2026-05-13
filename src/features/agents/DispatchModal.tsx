@@ -19,7 +19,7 @@ import {
   type OpenClawConnectionStatusRecord,
 } from "../../shared/lib/tauri";
 
-type DispatchRoute = "local" | "vicam";
+type DispatchRoute = "local" | "openclaw";
 
 type DispatchModalProps = {
   open: boolean;
@@ -233,7 +233,7 @@ export function DispatchModal({
   const openClawConnected = openClawStatus?.state === "connected";
   const selectedEntry = registryEntries.find((entry) => entry.id === selectedProfileId) ?? null;
   const autoSelected = selectedEntry?.selectionMode === "auto" || selectedProfileId === "auto";
-  const vicamEnabled = registryReady && openClawConnected && autoSelected && !isSubmitting;
+  const openClawDispatchEnabled = registryReady && openClawConnected && autoSelected && !isSubmitting;
 
   const validateSharedFields = () => {
     setErrorMessage(null);
@@ -256,19 +256,19 @@ export function DispatchModal({
       return;
     }
 
-    if (route === "vicam") {
+    if (route === "openclaw") {
       if (!openClawConnected) {
-        setErrorMessage("OpenClaw must be connected for VICAM dispatch.");
+        setErrorMessage("OpenClaw must be connected for orchestrated dispatch.");
         return;
       }
 
       if (!autoSelected) {
-        setErrorMessage("Select Auto to dispatch via VICAM.");
+        setErrorMessage("Select Auto to dispatch via OpenClaw.");
         return;
       }
 
       if (!prompt.trim()) {
-        setErrorMessage("Add a prompt for VICAM dispatch.");
+        setErrorMessage("Add a prompt for orchestrated dispatch.");
         return;
       }
     }
@@ -394,29 +394,29 @@ export function DispatchModal({
             <button
               type="button"
               className={`inline-flex h-9 flex-1 items-center justify-center gap-2 rounded-md px-4 text-[0.78rem] font-medium transition-colors duration-150 ${
-                vicamEnabled
+                openClawDispatchEnabled
                   ? "border border-[rgba(139,92,246,0.3)] bg-[rgba(139,92,246,0.1)] text-[rgba(221,214,254,0.95)] hover:bg-[rgba(139,92,246,0.16)]"
                   : "dispatch-control"
               }`}
-              disabled={!vicamEnabled}
+              disabled={!openClawDispatchEnabled}
               onClick={() => {
-                void submitDispatch("vicam");
+                void submitDispatch("openclaw");
               }}
-              aria-label="Dispatch via VICAM orchestration"
-              title={!openClawConnected ? "Connect OpenClaw to enable" : !autoSelected ? "Select Auto agent" : "Dispatch via VICAM"}
+              aria-label="Dispatch via OpenClaw orchestration"
+              title={!openClawConnected ? "Connect OpenClaw to enable" : !autoSelected ? "Select Auto agent" : "Dispatch via OpenClaw"}
             >
               {isSubmitting ? (
                 <LoaderCircle size={14} className="animate-spin" />
               ) : (
                 <Zap size={14} />
               )}
-              <span>Dispatch via VICAM</span>
+              <span>Dispatch via OpenClaw</span>
             </button>
           </div>
 
           {!openClawConnected ? (
             <p className="dispatch-text-subtle mt-2 text-center text-[0.65rem]">
-              Connect OpenClaw in Settings to enable VICAM dispatch.
+                Connect OpenClaw in Settings to enable orchestrated dispatch.
             </p>
           ) : null}
         </form>
