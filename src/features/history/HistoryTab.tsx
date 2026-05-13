@@ -396,8 +396,8 @@ export function HistoryTab() {
               </div>
             </header>
 
-            <div className="grid min-h-0 flex-1 grid-cols-[minmax(17rem,2fr)_minmax(0,3fr)] gap-3 px-3 py-3">
-              <div className="min-h-0 overflow-hidden rounded-[1.35rem] border border-[var(--surface-border-soft)] bg-[rgba(9,11,16,0.76)] shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
+            <div className="grid min-h-0 flex-1 gap-3 overflow-y-auto px-3 py-3 lg:grid-cols-[minmax(17rem,2fr)_minmax(0,3fr)] lg:overflow-hidden">
+              <div className="min-h-[18rem] overflow-hidden rounded-[1.35rem] border border-[var(--surface-border-soft)] bg-[rgba(9,11,16,0.76)] shadow-[0_24px_70px_rgba(0,0,0,0.28)] lg:min-h-0">
                 <SavePointList
                   savePoints={filteredSavePoints}
                   totalCount={savePoints.length}
@@ -417,7 +417,7 @@ export function HistoryTab() {
                 />
               </div>
 
-              <div className="min-h-0 overflow-hidden rounded-[1.35rem] border border-[var(--surface-border-soft)] bg-[rgba(7,9,14,0.7)] shadow-[0_24px_70px_rgba(0,0,0,0.33)]">
+              <div className="min-h-[22rem] overflow-hidden rounded-[1.35rem] border border-[var(--surface-border-soft)] bg-[rgba(7,9,14,0.7)] shadow-[0_24px_70px_rgba(0,0,0,0.33)] lg:min-h-0">
                 <DiffViewer
                   selectedSavePoint={selectedSavePoint}
                   diffStatus={diffStatus}

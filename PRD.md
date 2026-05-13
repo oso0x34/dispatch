@@ -233,7 +233,7 @@ Chat (OpenClaw) is **global** — it knows all projects and can work across them
 | **Quick actions** | "Create task" button next to input |
 | **Model selector** | Dropdown to override model for next message |
 | **Context awareness** | OpenClaw knows which project is selected, can reference files/tasks |
-| **Voice input** | Microphone button for voice-to-text (Whisper) |
+| **Voice input** | Post-v1; no microphone UI or transcription flow ships in the current public release |
 | **Code blocks** | Syntax-highlighted, copy button, collapsible for long output |
 
 **Data source:** OpenClaw WebSocket (main session)
@@ -601,14 +601,14 @@ Everything above, plus:
 
 | # | Question | Decision | Date |
 |---|----------|----------|------|
-| 1 | **Product name** | **Dispatch** — clean, standalone brand. legacy cockpit internally. | 2026-03-19 |
+| 1 | **Product name** | **Dispatch** — clean, standalone brand. | 2026-03-19 |
 | 2 | **Kanban markdown export** | **Yes** — tasks export as `.md` files in project folder. Git-trackable, portable. | 2026-03-19 |
 | 3 | **Agent auto-pick** | **Auto-pick as a dropdown option** — agent selector shows "Auto (let OpenClaw pick)" at the top of the list alongside manual choices. In standalone mode, defaults to last-used agent. | 2026-03-19 |
-| 4 | **PR integration** | **Phase 8** — GitHub PR creation/review. Skills already exist for this. | 2026-03-19 |
-| 5 | **Voice input** | **Yes** — mic button in Chat tab, voice-to-text. | 2026-03-19 |
-| 6 | **Multi-display** | **Yes** — optimize for ultrawide and dual monitor layouts. Responsive panels, detachable/resizable. | 2026-03-19 |
-| 7 | **Packaging** | **Open source, MIT license.** Distribute as `.AppImage` (Linux primary), `.deb`, and macOS `.dmg`. Flatpak later if demand. GitHub Releases for distribution. | 2026-03-19 |
-| 8 | **API key management** | **Yes** — Settings screen for API keys (ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_API_KEY, etc.). Falls back to shell env if not set in app. Stored locally in encrypted SQLite or OS keychain. | 2026-03-19 |
+| 4 | **PR integration** | **Post-v1** — current release includes OpenClaw review routing, not GitHub PR creation/review automation. | 2026-03-19 |
+| 5 | **Voice input** | **Post-v1** — no microphone UI or partial transcription flow ships in the current release. | 2026-03-19 |
+| 6 | **Multi-display** | **Responsive shell** — current release supports responsive panels; detachable windows are post-v1 if needed. | 2026-03-19 |
+| 7 | **Packaging** | **Open source, MIT license.** Current verified packages are `.AppImage` and `.deb` for Linux. macOS `.dmg` and Flatpak are post-v1. GitHub Releases are the distribution path. | 2026-03-19 |
+| 8 | **API key management** | **Yes** — Settings screen for API keys (ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_API_KEY, etc.). Falls back to shell env if not set in app. Secrets are stored locally in the OS keychain. | 2026-03-19 |
 | 9 | **Branding** | **Dispatch** is the brand. Own identity, own logo, separate from OpenClaw. OpenClaw is the AI persona inside Dispatch when OpenClaw is connected — but Dispatch stands alone. | 2026-03-19 |
 
 ## 13. Open Questions (Remaining)

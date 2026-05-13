@@ -137,7 +137,7 @@ export function SavePointList({
           <button
             type="button"
             disabled={isCreating || unsupported}
-            className="dispatch-action-button inline-flex items-center justify-center gap-1.5 rounded-[0.8rem] px-3 py-2 text-[0.68rem] font-medium"
+            className="dispatch-action-button inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[0.8rem] px-3 py-2 text-[0.68rem] font-medium"
             onClick={onCreateManualSavePoint}
             aria-label="Create manual save point"
           >

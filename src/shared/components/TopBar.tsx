@@ -20,7 +20,7 @@ export function TopBar() {
 
   return (
     <header className="dispatch-shell-bar">
-      <div className="flex min-h-[50px] items-center gap-4 px-3 py-2.5">
+      <div className="dispatch-shell-bar-inner flex min-h-[50px] items-center gap-4 px-3 py-2.5">
         <div className="dispatch-shell-brand flex min-w-0 items-center gap-2.5 pr-1">
           <div className="dispatch-brand-mark flex h-[18px] w-[18px] items-center justify-center rounded-md">
             <Activity size={11} />
@@ -70,7 +70,7 @@ export function TopBar() {
           })}
         </nav>
 
-        <div className="flex items-center gap-1">
+        <div className="dispatch-shell-actions flex items-center gap-1">
           <button
             type="button"
             className="dispatch-icon-button flex h-[26px] w-[26px] items-center justify-center rounded-md"

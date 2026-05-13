@@ -302,14 +302,14 @@ export function TasksTab({ linkedTaskId = null }: TasksTabProps) {
           </div>
 
           <form
-            className="mt-3 flex flex-wrap items-center gap-2 rounded-[1.05rem] border border-[var(--surface-border-soft)] bg-[rgba(255,255,255,0.03)] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
+            className="mt-3 grid gap-3 rounded-[1.05rem] border border-[var(--surface-border-soft)] bg-[rgba(255,255,255,0.03)] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] lg:grid-cols-[minmax(0,1fr)_minmax(16rem,19rem)]"
             onSubmit={handleCreateTask}
           >
             <div className="min-w-0 flex-1">
               <p className="text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
                 Quick Add
               </p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
+              <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
                 <input
                   value={newTaskTitle}
                   onChange={(event) => {
@@ -319,12 +319,12 @@ export function TasksTab({ linkedTaskId = null }: TasksTabProps) {
                     }
                   }}
                   placeholder="New task..."
-                  className="dispatch-input h-9 min-w-[14rem] flex-1 rounded-[0.85rem] px-3 text-[0.76rem]"
+                  className="dispatch-input h-9 min-w-0 rounded-[0.85rem] px-3 text-[0.76rem]"
                 />
                 <button
                   type="submit"
                   disabled={isCreating}
-                  className="dispatch-action-button inline-flex h-9 min-w-[5.5rem] items-center justify-center gap-1.5 rounded-[0.85rem] px-3 text-[0.76rem] font-medium disabled:opacity-60"
+                  className="dispatch-action-button inline-flex h-9 min-w-[5.5rem] shrink-0 items-center justify-center gap-1.5 rounded-[0.85rem] px-3 text-[0.76rem] font-medium disabled:opacity-60"
                 >
                   {isCreating ? <LoaderCircle className="animate-spin" size={12} /> : <Plus size={13} />}
                   <span>Add</span>
@@ -332,7 +332,7 @@ export function TasksTab({ linkedTaskId = null }: TasksTabProps) {
               </div>
             </div>
 
-            <div className="rounded-[1rem] border border-[var(--surface-border-soft)] bg-[rgba(0,0,0,0.18)] px-3 py-2 text-left">
+            <div className="min-w-0 rounded-[1rem] border border-[var(--surface-border-soft)] bg-[rgba(0,0,0,0.18)] px-3 py-2 text-left">
               <p className="text-[0.56rem] font-semibold uppercase tracking-[0.2em] text-[var(--text-subtle)]">
                 Inspector target
               </p>
@@ -359,7 +359,7 @@ export function TasksTab({ linkedTaskId = null }: TasksTabProps) {
             <LoaderCircle size={18} className="animate-spin dispatch-text-muted" />
           </div>
         ) : (
-          <div className="grid min-h-0 flex-1 gap-3 px-3 py-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)]">
+          <div className="grid min-h-0 flex-1 gap-3 px-3 py-3 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)]">
             <section className="flex min-h-[20rem] min-w-0 flex-col overflow-hidden rounded-[1.4rem] border border-[var(--surface-border-soft)] bg-[rgba(7,9,14,0.72)] shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
               <div className="flex items-center justify-between gap-3 border-b border-[var(--surface-border-soft)] px-4 py-3">
                 <div>

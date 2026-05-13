@@ -1064,14 +1064,14 @@ export function TaskDetailDrawer({
             <span>{isDeleting ? "Deleting" : "Delete"}</span>
           </button>
 
-          <div className="flex items-center gap-2">
-            <p className="dispatch-text-muted hidden text-[0.65rem] sm:block">
+          <div className="flex min-w-0 items-center gap-2">
+            <p className="dispatch-text-muted hidden whitespace-nowrap text-[0.65rem] 2xl:block">
               {isDirty ? "Unsaved edits" : "All changes saved"}
             </p>
             <button
               type="button"
               disabled={!isDirty || isSaving}
-              className="dispatch-icon-button inline-flex h-8 items-center justify-center rounded-[0.8rem] px-3 text-xs font-medium disabled:opacity-60"
+              className="dispatch-icon-button inline-flex h-8 items-center justify-center whitespace-nowrap rounded-[0.8rem] px-3 text-xs font-medium disabled:opacity-60"
               onClick={handleCancel}
             >
               Cancel
@@ -1079,7 +1079,7 @@ export function TaskDetailDrawer({
             <button
               type="button"
               disabled={!isDirty || isSaving}
-              className="dispatch-action-button inline-flex h-8 items-center justify-center gap-1.5 rounded-[0.8rem] px-3 text-xs font-medium disabled:opacity-60"
+              className="dispatch-action-button inline-flex h-8 items-center justify-center gap-1.5 whitespace-nowrap rounded-[0.8rem] px-3 text-xs font-medium disabled:opacity-60"
               onClick={() => {
                 void handleSave();
               }}

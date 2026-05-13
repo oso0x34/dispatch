@@ -115,7 +115,7 @@ export function ProjectSwitcher() {
     <>
       <div
         ref={switcherRef}
-        className="relative"
+        className="dispatch-project-switcher relative min-w-0"
       >
         <div className="dispatch-project-switcher-label px-0.5 pb-1">
           <span className="dispatch-text-subtle text-[0.54rem] font-semibold uppercase tracking-[0.24em]">
