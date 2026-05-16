@@ -91,7 +91,6 @@ Tested on Debian and Ubuntu (22.04+). Install:
 - `build-essential`
 - `pkg-config`
 - `libwebkit2gtk-4.1-dev`
-- `libappindicator3-dev`
 - `libayatana-appindicator3-dev`
 - `librsvg2-dev`
 - `patchelf`
