@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     permissions:
-      contents: read
+      contents: write
     env:
       CI: true
 
@@ -72,7 +72,7 @@ jobs:
       - name: Run Phase 10 release smoke
         run: bash scripts/smoke/phase-10-release.sh
 
-      - name: Upload AppImage bundle
+      - name: Upload AppImage bundle (Actions artifact)
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
@@ -80,10 +80,22 @@ jobs:
           path: target/release/bundle/appimage/*.AppImage
           if-no-files-found: error
 
-      - name: Upload deb bundle
+      - name: Upload deb bundle (Actions artifact)
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: dispatch-deb-${{ github.ref_name }}
           path: target/release/bundle/deb/*.deb
           if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Dispatch ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            target/release/bundle/appimage/*.AppImage
+            target/release/bundle/deb/*.deb
+          fail_on_unmatched_files: true
