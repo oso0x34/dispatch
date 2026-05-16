@@ -1,36 +1,92 @@
+<div align="center">
+
+<img src="src-tauri/icons/128x128.png" alt="Dispatch" width="96" />
+
 # Dispatch
 
-Dispatch is a Tauri v2 desktop command center for AI-assisted development work. It keeps projects, terminals, task dispatch, file browsing, and git save points in one native app.
+**A native desktop command center for AI-assisted development.**
 
-Visual shell authority lives in [`docs/visual-rebuild-spec.md`](docs/visual-rebuild-spec.md) and the repo-local references under [`docs/reference/visual-rebuild/`](docs/reference/visual-rebuild/).
+Projects, terminals, task dispatch, file browsing, and git save points — in one place, with no browser tab tax.
+
+[![Release](https://img.shields.io/github/v/release/oso0x34/dispatch?include_prereleases&sort=semver)](https://github.com/oso0x34/dispatch/releases)
+[![Build](https://github.com/oso0x34/dispatch/actions/workflows/release.yml/badge.svg)](https://github.com/oso0x34/dispatch/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform: Linux](https://img.shields.io/badge/platform-Linux-blue)](#install)
+[![Built with Tauri](https://img.shields.io/badge/built%20with-Tauri%20v2-24C8DB)](https://tauri.app/)
+
+</div>
+
+---
+
+## What it does
+
+Dispatch is a [Tauri v2](https://tauri.app/) desktop app that brings the way you actually work with AI development tools into one native shell. Spawn `codex`, `claude`, `gemini`, or any other CLI directly from a kanban-style task board. Watch sessions, track file changes, and create git save points without leaving the window.
+
+The Rust backend owns everything that touches your machine — PTYs, filesystem, secrets, and the SQLite store. The React frontend never talks to disk directly. That isolation is the whole point: no shell-string interpolation, no rogue paths, no surprises.
+
+## Screenshot
+
+<img src="docs/reference/visual-rebuild/agents-main.png" alt="Dispatch main workspace" width="900" />
+
+## Features
+
+- **Multi-project workspace** — switch between local git repos in one click
+- **Native terminals** — Rust-backed PTYs, single-owner lifecycle, websocket attach for reconnects
+- **Direct CLI dispatch** — structured `program` + `args[]` + `env` + `cwd`; zero shell parsing
+- **Kanban task board** — 5 workflow columns (Draft → Planning → In Progress → Review → Done) with markdown export to `<project>/dispatch/tasks/`
+- **Files tab** — Rust-owned tree, search, and watching with `.gitignore` filtering
+- **History v1** — git save points on `refs/dispatch/*`. Never pollutes your branch history. Pre-run save points fire even when the repo is clean.
+- **OpenClaw integration (optional)** — mirror orchestrated chat/review through a local gateway when one is available
+- **Standalone mode** — works without OpenClaw, no extra infrastructure needed
 
 ## Modes
 
-- Standalone mode: Dispatch works without OpenClaw. It uses the Rust PTY manager to spawn local CLI tools directly, so you can open terminals and run tools like `codex`, `claude`, or `gemini` without extra infrastructure.
-- OpenClaw mode: when a local OpenClaw gateway is available, Dispatch mirrors orchestrated sessions and chat/review flows through it. OpenClaw is optional and acts as an accelerator, not a requirement.
+| Mode | Requires | What you get |
+|---|---|---|
+| **Standalone** | Just Dispatch | Local projects, terminals, tasks, files, history, direct CLI dispatch |
+| **Connected** | Local OpenClaw gateway | Everything above + orchestrated Chat tab and review loop |
 
-To enable the connected path, set the gateway URL in Settings -> Connection. The default gateway URL is `ws://127.0.0.1:18789`. If your gateway requires auth, store `OPENCLAW_GATEWAY_TOKEN` in Settings -> Secrets. Without OpenClaw, the Chat tab stays unavailable, but tasks, files, history, and direct terminal dispatch still work.
+To turn on connected mode, set the gateway URL in **Settings → Connection** (default: `ws://127.0.0.1:18789`). If the gateway needs auth, store `OPENCLAW_GATEWAY_TOKEN` in **Settings → Secrets** (Linux keychain).
 
-## Environment
+## Install
 
-Standalone mode does not require environment variables. Optional connected or agent-profile values are listed in [`.env.example`](.env.example):
+Pre-built Linux bundles for every release are attached to the [Releases page](https://github.com/oso0x34/dispatch/releases). Pick your format:
 
-| Variable | Required | Purpose |
-|---|---:|---|
-| `OPENCLAW_GATEWAY_URL` | No | OpenClaw gateway URL. Defaults to `ws://127.0.0.1:18789` if unset. |
-| `OPENCLAW_GATEWAY_TOKEN` | No | Optional OpenClaw gateway token. Prefer Settings -> Secrets for local keychain storage. |
-| `ANTHROPIC_API_KEY` | No | Optional provider credential for local agent profiles. |
-| `OPENAI_API_KEY` | No | Optional provider credential for local agent profiles. |
-| `GOOGLE_API_KEY` | No | Optional provider credential for local agent profiles. |
+### `.AppImage` (portable)
 
-Dispatch reads these values from the process environment when it launches. Export them in your shell, `direnv`, or desktop launcher environment if needed; the app does not require a `.env` file.
+```bash
+chmod +x Dispatch_*.AppImage
+./Dispatch_*.AppImage
+```
 
-## Linux Prerequisites
+### `.deb` (Debian / Ubuntu)
 
-For local source builds on Debian or Ubuntu, install:
+```bash
+sudo apt install ./Dispatch_*.deb
+```
+
+## More screenshots
+
+<table>
+<tr>
+<td><img src="docs/reference/visual-rebuild/agents-terminal.png" alt="Agents – Terminal" /><br/><sub>Native terminal panel</sub></td>
+<td><img src="docs/reference/visual-rebuild/agents-diff.png" alt="Agents – Diff" /><br/><sub>Diff view inside a session</sub></td>
+</tr>
+<tr>
+<td><img src="docs/reference/visual-rebuild/files-main.png" alt="Files tab" /><br/><sub>Files tab with tree + preview</sub></td>
+<td><img src="docs/reference/visual-rebuild/browser.png" alt="Browser preview" /><br/><sub>Localhost preview (experimental, post-v1)</sub></td>
+</tr>
+</table>
+
+## Build from source
+
+<details>
+<summary><strong>Linux prerequisites</strong></summary>
+
+Tested on Debian and Ubuntu (22.04+). Install:
 
 - `node` 22.x
-- Rust stable
+- Rust stable (via `rustup`)
 - `npm`
 - `build-essential`
 - `pkg-config`
@@ -41,96 +97,85 @@ For local source builds on Debian or Ubuntu, install:
 - `patchelf`
 - `libfuse2`
 
-The release workflow in [`.github/workflows/release.yml`](.github/workflows/release.yml) runs on `ubuntu-22.04` and uses the same Tauri packaging dependencies.
+The release workflow runs on `ubuntu-22.04` with the same packaging dependencies.
 
-## Build From Source
+</details>
 
 From the repo root:
 
 ```bash
 npm ci
-npm audit
 npm test
 cargo test --locked --manifest-path src-tauri/Cargo.toml
 npx tauri dev
 ```
 
-`npm run dev` starts only the Vite frontend on port `1420`. Use `npx tauri dev` for the desktop app because it starts both the frontend and the Rust/Tauri shell.
+`npm run dev` starts only the Vite frontend on port `1420`. Use `npx tauri dev` for the full desktop app — it spawns both the frontend and the Rust shell.
 
-## First Run
+### First run
 
-1. Launch the desktop app with `npx tauri dev`.
-2. Open Settings -> Projects and add a local git repository.
-3. Use Agents -> New shell to open a terminal in that project.
-4. Direct dispatch uses local CLI tools installed on your machine, such as `codex`, `claude`, or `gemini`.
-5. OpenClaw features stay inactive until a gateway URL is configured and reachable.
+1. Launch with `npx tauri dev`
+2. Open **Settings → Projects** and add a local git repository
+3. Use **Agents → New shell** to open a terminal in that project
+4. Dispatch will use whichever CLI tools (`codex`, `claude`, `gemini`, etc.) you already have installed
+5. OpenClaw features stay dormant until a reachable gateway URL is configured
 
-For a packaged local build:
+## Environment
 
-```bash
-bash scripts/smoke/phase-10-release.sh
-```
+Standalone mode does **not** require any environment variables. The optional ones, for connected mode or pre-loaded agent profiles, live in [`.env.example`](.env.example):
 
-For a raw package build without the smoke gate:
+| Variable | Required | Purpose |
+|---|---:|---|
+| `OPENCLAW_GATEWAY_URL` | No | OpenClaw gateway URL. Defaults to `ws://127.0.0.1:18789`. |
+| `OPENCLAW_GATEWAY_TOKEN` | No | Optional gateway token. Prefer Settings → Secrets for keychain storage. |
+| `ANTHROPIC_API_KEY` | No | Optional credential for local Anthropic-backed agent profiles. |
+| `OPENAI_API_KEY` | No | Optional credential for local OpenAI-backed agent profiles. |
+| `GOOGLE_API_KEY` | No | Optional credential for local Google-backed agent profiles. |
 
-```bash
-npx tauri build --bundles appimage,deb --ci
-```
+Dispatch reads these from the process environment at launch. Export them in your shell, `direnv`, or your desktop launcher — no `.env` file required.
 
-## Packaged Install
+## Architecture, in one paragraph
 
-Bundled Linux artifacts are written under `target/release/bundle/`.
+Rust owns SQLite (via `rusqlite`), the filesystem (`notify`, `ignore`, `grep-searcher`), PTYs (`portable-pty`), secrets (`keyring` → OS keychain), and OpenClaw transport (`tokio-tungstenite`). The React frontend keeps **only UI state** in Zustand and talks to the backend through typed Tauri commands. PTYs are created in exactly one place (`create_terminal_session()`); websocket routes attach to existing sessions, never spawn new ones. Save points live on `refs/dispatch/*` so they never collide with your real branch history. Full architectural lockdown in [`ROADMAP-v2.md`](ROADMAP-v2.md).
 
-### `.AppImage`
+## Releasing (maintainers)
 
-```bash
-chmod +x target/release/bundle/appimage/*.AppImage
-./target/release/bundle/appimage/*.AppImage
-```
+<details>
+<summary><strong>Cutting a release</strong></summary>
 
-### `.deb`
+1. Bump the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json` — all three must match.
+2. Run the gates locally:
+   ```bash
+   npm ci
+   npm test
+   cargo test --locked --manifest-path src-tauri/Cargo.toml
+   bash scripts/smoke/phase-10-release.sh
+   ```
+3. Commit and push.
+4. Tag and push the tag:
+   ```bash
+   git tag v0.1.0
+   git push origin v0.1.0
+   ```
+5. GitHub Actions runs [`release.yml`](.github/workflows/release.yml), verifies the tag matches `package.json`, runs all tests, builds the `.AppImage` and `.deb`, and publishes a GitHub Release with both attached.
+6. Install the generated bundle on a clean Linux box and confirm the app launches before announcing.
 
-```bash
-sudo apt install ./target/release/bundle/deb/*.deb
-```
+`workflow_dispatch` is still useful for dry-run validation, but artifact publication is tag-triggered only.
 
-## Release Smoke
+</details>
 
-Run the release gate locally with:
+<details>
+<summary><strong>Release-readiness targets</strong></summary>
 
-```bash
-bash scripts/smoke/phase-10-release.sh
-```
+These are not automated perf gates yet — they're the targets the release smoke is designed to protect:
 
-That script verifies the release config, builds `appimage` and `deb` bundles with Tauri, reruns the release smoke with artifact checks enabled, and prints the bundle paths.
+- Cold start under **2 seconds** on the target Linux box
+- Idle memory under **300 MB RSS** after the app sits idle for 60 seconds with one project loaded and no active streams
+- Terminal spawn latency under **3 seconds** (direct dispatch or blank shell)
+- Save-point creation under **2 seconds** on a warm local repo
 
-## Repeatable Release Cut
-
-1. Bump the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json` together.
-2. Run the same gates the release workflow enforces:
-
-```bash
-npm ci
-cargo test --locked --manifest-path src-tauri/Cargo.toml
-npm test
-bash scripts/smoke/phase-10-release.sh
-```
-
-3. Tag the release as `vX.Y.Z`, matching the package version exactly.
-4. Push the tag. GitHub Actions runs [`.github/workflows/release.yml`](.github/workflows/release.yml), verifies the tag/version match, and uploads the `.AppImage` and `.deb` artifacts.
-5. Install the generated package on a clean Linux box and confirm the app launches before announcing the cut.
-
-`workflow_dispatch` is still useful for dry-run validation, but artifact publication and tag/version enforcement only happen on tag-triggered runs.
-
-## Release Checklist
-
-- Startup time: cold start under 2 seconds on the target Linux box.
-- Idle memory: under 300 MB RSS after the app sits idle for 60 seconds with one project loaded and no active streams.
-- Terminal spawn latency: direct dispatch or blank terminal spawn reaches first output in under 3 seconds.
-- Save-point latency: manual or pre-dispatch save-point creation completes in under 2 seconds on a warm local repository.
-
-These are release targets, not automated perf tests yet. The current automated release gate is [`.github/workflows/release.yml`](.github/workflows/release.yml) plus [`scripts/smoke/phase-10-release.sh`](scripts/smoke/phase-10-release.sh).
+</details>
 
 ## License
 
-Dispatch is licensed under the [MIT License](LICENSE).
+[MIT](LICENSE)
