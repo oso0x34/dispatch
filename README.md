@@ -8,6 +8,7 @@
 
 Projects, terminals, task dispatch, file browsing, and git save points — in one place, with no browser tab tax.
 
+[![Status: Work in Progress](https://img.shields.io/badge/status-work%20in%20progress-orange)](#status)
 [![Release](https://img.shields.io/github/v/release/oso0x34/dispatch?include_prereleases&sort=semver)](https://github.com/oso0x34/dispatch/releases)
 [![Build](https://github.com/oso0x34/dispatch/actions/workflows/release.yml/badge.svg)](https://github.com/oso0x34/dispatch/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
