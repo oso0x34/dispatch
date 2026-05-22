@@ -24,10 +24,6 @@ Dispatch is a [Tauri v2](https://tauri.app/) desktop app that brings the way you
 
 The Rust backend owns everything that touches your machine — PTYs, filesystem, secrets, and the SQLite store. The React frontend never talks to disk directly. That isolation is the whole point: no shell-string interpolation, no rogue paths, no surprises.
 
-## Screenshot
-
-<img src="docs/reference/visual-rebuild/agents-main.png" alt="Dispatch main workspace" width="900" />
-
 ## Features
 
 - **Multi-project workspace** — switch between local git repos in one click
@@ -64,19 +60,6 @@ chmod +x Dispatch_*.AppImage
 ```bash
 sudo apt install ./Dispatch_*.deb
 ```
-
-## More screenshots
-
-<table>
-<tr>
-<td><img src="docs/reference/visual-rebuild/agents-terminal.png" alt="Agents – Terminal" /><br/><sub>Native terminal panel</sub></td>
-<td><img src="docs/reference/visual-rebuild/agents-diff.png" alt="Agents – Diff" /><br/><sub>Diff view inside a session</sub></td>
-</tr>
-<tr>
-<td><img src="docs/reference/visual-rebuild/files-main.png" alt="Files tab" /><br/><sub>Files tab with tree + preview</sub></td>
-<td><img src="docs/reference/visual-rebuild/browser.png" alt="Browser preview" /><br/><sub>Localhost preview (experimental, post-v1)</sub></td>
-</tr>
-</table>
 
 ## Build from source
 
